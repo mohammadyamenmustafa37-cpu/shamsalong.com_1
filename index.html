@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sham Salong</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #fff;
+    }
+
+    header {
+      background-color: #1c1c1c;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #444;
+    }
+
+    .logo {
+      font-size: 32px;
+      color: #d2691e; /* brownish-orange */
+      font-weight: bold;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-evenly;
+      padding: 30px 20px;
+    }
+
+    .card {
+      background-color: #222;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 20px;
+      width: 300px;
+      margin: 15px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #98fb98; /* kiwi green */
+    }
+
+    .price-list li {
+      list-style: none;
+      padding: 8px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+    }
+
+    input {
+      background-color: #333;
+      color: #fff;
+    }
+
+    button {
+      background-color: #ff4c4c;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #ff6f6f;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid #333;
+      color: #aaa;
+    }
+
+    img.qr {
+      width: 100%;
+      max-width: 250px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Sham Salong</div>
+    <p>Esplanaden 1B • Tel: 0793488688</p>
+  </header>
+
+  <!-- Login Section -->
+  <div class="container" id="loginSection">
+    <div class="card">
+      <h3>Logga in</h3>
+      <input type="email" id="email" placeholder="E-postadress" />
+      <input type="tel" id="phone" placeholder="Telefonnummer" />
+      <button onclick="login()">Logga in</button>
+    </div>
+  </div>
+
+  <!-- My Page Section -->
+  <div class="container hidden" id="myPageSection">
+    <div class="card">
+      <h3>Välkommen!</h3>
+      <p id="userInfo"></p>
+      <button onclick="logout()">Logga ut</button>
+    </div>
+
+    <div class="card">
+      <h3>Prislista</h3>
+      <ul class="price-list">
+        <li>Fade: 250 kr</li>
+        <li>Skägg: 150 kr</li>
+        <li>Färgning: 600 kr</li>
+        <li>Barnklippning (under 12): 200 kr</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Boka direkt via QR-kod</h3>
+      <img 
+        src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=shamsalong.se"
+        alt="QR till shamsalong.se" 
+        class="qr"
+      />
+      <p>Skanna för att besöka <strong>shamsalong.se</strong></p>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Sham Salong. Alla rättigheter förbehållna.
+  </footer>
+
+  <script>
+    function login() {
+      const email = document.getElementById("email").value;
+      const phone = document.getElementById("phone").value;
+
+      if (email && phone) {
+        localStorage.setItem("userEmail", email);
+        localStorage.setItem("userPhone", phone);
+
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("myPageSection").classList.remove("hidden");
+        document.getElementById("userInfo").innerText =
+          `Inloggad som: ${email} (${phone})`;
+      } else {
+        alert("Fyll i både e-post och telefonnummer.");
+      }
+    }
+
+    function logout() {
+      localStorage.clear();
+      document.getElementById("loginSection").classList.remove("hidden");
+      document.getElementById("myPageSection").classList.add("hidden");
+    }
+
+    // Auto-login check
+    window.onload = function() {
+      const email = localStorage.getItem("userEmail");
+      const phone = localStorage.getItem("userPhone");
+
+      if (email && phone) {
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("myPageSection").classList.remove("hidden");
+        document.getElementById("userInfo").innerText =
+          `Inloggad som: ${email} (${phone})`;
+      }
+    };
+  </script>
+
+</body>
+</html>
