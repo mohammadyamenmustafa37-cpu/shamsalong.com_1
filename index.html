@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<title>Sham Salong</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #111;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
+    header {
+        background-color: #b30000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+    }
+    header img {
+        height: 60px;
+    }
+    header nav a {
+        color: white;
+        text-decoration: none;
+        margin-left: 15px;
+        font-weight: bold;
+    }
+    h1, h2 {
+        color: #ff4d4d;
+    }
+    main {
+        padding: 20px;
+    }
+    .form-container {
+        background: #222;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
+    input, select, button {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        border: none;
+    }
+    button {
+        background-color: #b30000;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #ff4d4d;
+    }
+    .booking-list {
+        margin-top: 20px;
+        background: #222;
+        padding: 15px;
+        border-radius: 10px;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <img src="sham_logo_resized.png" alt="Sham Salong">
+    <nav>
+        <a href="#" id="loginBtn">Logga in</a>
+        <a href="#" id="registerBtn">Registrera</a>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <h1>Om oss</h1>
+        <p>Sham Salong erbjuder professionella tjänster inom fade, klippning, ögonbryn, vaxning, skäggtrimning och hårfärgning. 
+        Vi finns på Esplanaden 1B. Boka din tid idag!</p>
+    </section>
+
+    <section class="form-container">
+        <h2>Boka tid</h2>
+        <form id="bookingForm">
+            <input type="text" id="namn" placeholder="Ditt namn" required>
+            <input type="tel" id="telefon" placeholder="Telefonnummer" required>
+            <input type="datetime-local" id="tid" required>
+            <select id="tjanst" required>
+                <option value="">Välj tjänst</option>
+                <option>Fade - 250 kr</option>
+                <option>Skägg - 150 kr</option>
+                <option>Färgning - 600 kr</option>
+                <option>Klippning barn under 12 - 200 kr</option>
+            </select>
+            <button type="submit">Boka</button>
+        </form>
+    </section>
+
+    <section class="booking-list">
+        <h2>Kommande bokningar</h2>
+        <ul id="bookingList"></ul>
+    </section>
+</main>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
+    authDomain: "shamsalong-6c54c.firebaseapp.com",
+    projectId: "shamsalong-6c54c",
+    storageBucket: "shamsalong-6c54c.firebasestorage.app",
+    messagingSenderId: "1023072544720",
+    appId: "1:1023072544720:web:968e31cc9350bc95803bd5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  document.getElementById("bookingForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const namn = document.getElementById("namn").value;
+    const telefon = document.getElementById("telefon").value;
+    const tid = document.getElementById("tid").value;
+    const tjanst = document.getElementById("tjanst").value;
+
+    await addDoc(collection(db, "bokningar"), { namn, telefon, tid, tjanst });
+    alert("Bokning skickad!");
+    e.target.reset();
+  });
+
+  const q = query(collection(db, "bokningar"), orderBy("tid"));
+  onSnapshot(q, (snapshot) => {
+    const bookingList = document.getElementById("bookingList");
+    bookingList.innerHTML = "";
+    snapshot.forEach((doc) => {
+      const b = doc.data();
+      bookingList.innerHTML += `<li>${b.namn} - ${b.tid} - ${b.tjanst}</li>`;
+    });
+  });
+</script>
+
+</body>
+</html>
