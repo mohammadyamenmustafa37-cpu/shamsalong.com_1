@@ -7,53 +7,78 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #6a0dad, #ffd700); /* lila & gul */
+      background: linear-gradient(135deg, #6a0dad, #ff9800, #ffd700, #ff4081, #2196f3);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
       color: #fff;
       text-align: center;
       padding: 40px;
     }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     h1, h2 {
       margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
+
     select, button {
       margin: 10px;
-      padding: 10px;
+      padding: 12px 18px;
       font-size: 16px;
-      border-radius: 5px;
+      border-radius: 8px;
       border: none;
+      transition: all 0.3s ease;
     }
+
     select {
       color: #333;
     }
+
     button {
       cursor: pointer;
+      font-weight: bold;
     }
+
     .btn-swish {
-      background: #4CAF50;
-      color: white;
-    }
-    .btn-spot {
-      background: #ff6600;
+      background: linear-gradient(45deg, #00c853, #64dd17);
       color: white;
     }
     .btn-swish:hover {
-      background: #45a049;
+      background: linear-gradient(45deg, #009624, #43a047);
+      transform: scale(1.05);
+    }
+
+    .btn-spot {
+      background: linear-gradient(45deg, #ff5722, #ff9800);
+      color: white;
     }
     .btn-spot:hover {
-      background: #e65c00;
+      background: linear-gradient(45deg, #e64a19, #f57c00);
+      transform: scale(1.05);
     }
+
     #qrcode {
       margin-top: 20px;
     }
+
     #status {
       margin-top: 20px;
       font-weight: bold;
+      font-size: 18px;
+      color: #fff3e0;
     }
+
     .about {
       background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      margin-top: 40px;
-      border-radius: 10px;
+      padding: 25px;
+      margin-top: 50px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
   </style>
 </head>
@@ -88,21 +113,18 @@
 
   <script>
     function generateSwishQR() {
-      const swishNumber = "1230711572";  // Ditt riktiga Swish-nummer
+      const swishNumber = "1230711572";  // Ditt Swish-nummer
       const serviceSelect = document.getElementById("service");
       const amount = serviceSelect.value;
       const serviceText = serviceSelect.options[serviceSelect.selectedIndex].text;
 
       const message = `Bokning: ${serviceText} hos Sham Salong`;
 
-      // Swish QR-format (enkel simulering)
       const swishData = `C=SE;A=${swishNumber};AM=${amount};MSG=${encodeURIComponent(message)}`;
 
-      // Rensa gammal QR
       document.getElementById("qrcode").innerHTML = "";
       document.getElementById("status").innerHTML = "";
 
-      // Skapa ny QR
       new QRCode(document.getElementById("qrcode"), {
         text: swishData,
         width: 200,
