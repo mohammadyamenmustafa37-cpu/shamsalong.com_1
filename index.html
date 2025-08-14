@@ -1,149 +1,127 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8">
-<title>Sham Salong</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
+  <meta charset="UTF-8">
+  <title>Sham Salong - Bokning & Betalning</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
     body {
-        font-family: Arial, sans-serif;
-        background-color: #111;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-    }
-    header {
-        background-color: #b30000;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 20px;
-    }
-    header img {
-        height: 60px;
-    }
-    header nav a {
-        color: white;
-        text-decoration: none;
-        margin-left: 15px;
-        font-weight: bold;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #6a0dad, #ffd700); /* lila & gul */
+      color: #fff;
+      text-align: center;
+      padding: 40px;
     }
     h1, h2 {
-        color: #ff4d4d;
+      margin-bottom: 20px;
     }
-    main {
-        padding: 20px;
+    select, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
     }
-    .form-container {
-        background: #222;
-        padding: 20px;
-        border-radius: 10px;
-        margin-top: 20px;
-    }
-    input, select, button {
-        width: 100%;
-        padding: 10px;
-        margin: 5px 0;
-        border-radius: 5px;
-        border: none;
+    select {
+      color: #333;
     }
     button {
-        background-color: #b30000;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
+      cursor: pointer;
     }
-    button:hover {
-        background-color: #ff4d4d;
+    .btn-swish {
+      background: #4CAF50;
+      color: white;
     }
-    .booking-list {
-        margin-top: 20px;
-        background: #222;
-        padding: 15px;
-        border-radius: 10px;
+    .btn-spot {
+      background: #ff6600;
+      color: white;
     }
-</style>
+    .btn-swish:hover {
+      background: #45a049;
+    }
+    .btn-spot:hover {
+      background: #e65c00;
+    }
+    #qrcode {
+      margin-top: 20px;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .about {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      margin-top: 40px;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-    <img src="sham_logo_resized.png" alt="Sham Salong">
-    <nav>
-        <a href="#" id="loginBtn">Logga in</a>
-        <a href="#" id="registerBtn">Registrera</a>
-    </nav>
-</header>
+  <h1>Välkommen till Sham Salong</h1>
+  <h2>Boka din tid och välj betalningsmetod</h2>
 
-<main>
-    <section>
-        <h1>Om oss</h1>
-        <p>Sham Salong erbjuder professionella tjänster inom fade, klippning, ögonbryn, vaxning, skäggtrimning och hårfärgning. 
-        Vi finns på Esplanaden 1B. Boka din tid idag!</p>
-    </section>
+  <label for="service">Välj tjänst:</label>
+  <select id="service">
+    <option value="250">Fade - 250 kr</option>
+    <option value="150">Skägg - 150 kr</option>
+    <option value="600">Färgning - 600 kr</option>
+    <option value="200">Barnklippning (under 12) - 200 kr</option>
+  </select>
 
-    <section class="form-container">
-        <h2>Boka tid</h2>
-        <form id="bookingForm">
-            <input type="text" id="namn" placeholder="Ditt namn" required>
-            <input type="tel" id="telefon" placeholder="Telefonnummer" required>
-            <input type="datetime-local" id="tid" required>
-            <select id="tjanst" required>
-                <option value="">Välj tjänst</option>
-                <option>Fade - 250 kr</option>
-                <option>Skägg - 150 kr</option>
-                <option>Färgning - 600 kr</option>
-                <option>Klippning barn under 12 - 200 kr</option>
-            </select>
-            <button type="submit">Boka</button>
-        </form>
-    </section>
+  <br><br>
 
-    <section class="booking-list">
-        <h2>Kommande bokningar</h2>
-        <ul id="bookingList"></ul>
-    </section>
-</main>
+  <button class="btn-swish" onclick="generateSwishQR()">Betala med Swish</button>
+  <button class="btn-spot" onclick="payOnSpot()">Betala på plats</button>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <div id="qrcode"></div>
+  <div id="status"></div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
-    authDomain: "shamsalong-6c54c.firebaseapp.com",
-    projectId: "shamsalong-6c54c",
-    storageBucket: "shamsalong-6c54c.firebasestorage.app",
-    messagingSenderId: "1023072544720",
-    appId: "1:1023072544720:web:968e31cc9350bc95803bd5"
-  };
+  <div class="about">
+    <h2>Om oss</h2>
+    <p>
+      Sham Salong är en modern frisörsalong på Esplanaden 1B som erbjuder fade, klippning, skäggtrimning,
+      hårfärgning, ögonbryn och vaxning. Vi kombinerar erfarenhet med passion för att ge dig en stil du kan vara stolt över.
+    </p>
+  </div>
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  <script>
+    function generateSwishQR() {
+      const swishNumber = "1230711572";  // Ditt riktiga Swish-nummer
+      const serviceSelect = document.getElementById("service");
+      const amount = serviceSelect.value;
+      const serviceText = serviceSelect.options[serviceSelect.selectedIndex].text;
 
-  document.getElementById("bookingForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const namn = document.getElementById("namn").value;
-    const telefon = document.getElementById("telefon").value;
-    const tid = document.getElementById("tid").value;
-    const tjanst = document.getElementById("tjanst").value;
+      const message = `Bokning: ${serviceText} hos Sham Salong`;
 
-    await addDoc(collection(db, "bokningar"), { namn, telefon, tid, tjanst });
-    alert("Bokning skickad!");
-    e.target.reset();
-  });
+      // Swish QR-format (enkel simulering)
+      const swishData = `C=SE;A=${swishNumber};AM=${amount};MSG=${encodeURIComponent(message)}`;
 
-  const q = query(collection(db, "bokningar"), orderBy("tid"));
-  onSnapshot(q, (snapshot) => {
-    const bookingList = document.getElementById("bookingList");
-    bookingList.innerHTML = "";
-    snapshot.forEach((doc) => {
-      const b = doc.data();
-      bookingList.innerHTML += `<li>${b.namn} - ${b.tid} - ${b.tjanst}</li>`;
-    });
-  });
-</script>
+      // Rensa gammal QR
+      document.getElementById("qrcode").innerHTML = "";
+      document.getElementById("status").innerHTML = "";
+
+      // Skapa ny QR
+      new QRCode(document.getElementById("qrcode"), {
+        text: swishData,
+        width: 200,
+        height: 200
+      });
+
+      document.getElementById("status").innerText = 
+        `Skanna QR-koden i Swish för att betala ${amount} kr (${serviceText}).`;
+    }
+
+    function payOnSpot() {
+      const serviceSelect = document.getElementById("service");
+      const serviceText = serviceSelect.options[serviceSelect.selectedIndex].text;
+
+      document.getElementById("qrcode").innerHTML = "";
+      document.getElementById("status").innerText = 
+        `Du har valt att betala på plats för ${serviceText}.`;
+    }
+  </script>
 
 </body>
 </html>
