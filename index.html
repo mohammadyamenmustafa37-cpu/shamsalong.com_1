@@ -2,39 +2,81 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <title>Sham Salong - Bokning</title>
+  <title>Sham Salong</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #2e003e; /* mörk lila bakgrund */
-      color: #f9f871; /* gul text */
       margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+
+    /* Hero / Header */
+    header {
+      background: linear-gradient(to right, #4a148c, #ffd700);
+      color: white;
+      padding: 100px 20px;
       text-align: center;
     }
 
-    header {
-      background: #4a148c; /* lila header */
-      padding: 20px;
-    }
-
     header h1 {
+      font-size: 3em;
       margin: 0;
-      font-size: 2.5em;
-      color: #ffd700; /* guld/gul rubrik */
     }
 
+    header p {
+      font-size: 1.2em;
+    }
+
+    /* Sektioner */
     section {
-      padding: 40px 20px;
+      padding: 60px 20px;
+      max-width: 1000px;
+      margin: auto;
     }
 
-    h2 {
-      color: #ffd700; /* gul rubrik */
+    section h2 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 30px;
+      color: #4a148c;
     }
 
-    select, button {
-      margin: 15px;
+    /* Om oss */
+    .about {
+      background-color: #f3e5f5;
+      border-radius: 10px;
+      padding: 30px;
+      line-height: 1.6;
+    }
+
+    /* Tjänster */
+    .services {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 20px;
+    }
+
+    .service {
+      flex: 1 1 200px;
+      background-color: #fff8e1;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .service h3 {
+      color: #4a148c;
+    }
+
+    /* Bokning */
+    .booking select, 
+    .booking button {
+      margin: 10px;
       padding: 12px 20px;
       font-size: 16px;
       border-radius: 6px;
@@ -42,13 +84,9 @@
       outline: none;
     }
 
-    select {
-      color: #333;
-    }
-
     .btn-swish {
-      background: #ffd700; /* gul */
-      color: #4a148c; /* mörklila text */
+      background: #ffd700;
+      color: #4a148c;
       font-weight: bold;
       cursor: pointer;
     }
@@ -58,7 +96,7 @@
     }
 
     .btn-spot {
-      background: #6a1b9a; /* lila */
+      background: #6a1b9a;
       color: #fff;
       font-weight: bold;
       cursor: pointer;
@@ -69,35 +107,74 @@
     }
 
     #qrcode {
-      margin-top: 30px;
+      margin-top: 20px;
+      text-align: center;
     }
 
     #status {
-      margin-top: 20px;
-      font-size: 18px;
+      margin-top: 15px;
       font-weight: bold;
-      color: #ffd700;
+      text-align: center;
     }
 
-    .about {
-      background: #4a148c;
-      color: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      max-width: 800px;
-      margin: 40px auto;
+    /* Kontakt */
+    .contact {
+      background-color: #4a148c;
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .contact p {
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
 
+  <!-- Hero -->
   <header>
-    <h1>Sham Salong</h1>
-    <p>Boka din tid enkelt online</p>
+    <h1>Välkommen till Sham Salong</h1>
+    <p>Din moderna frisörsalong i hjärtat av staden</p>
   </header>
 
+  <!-- Om oss -->
   <section>
-    <h2>Boka din tjänst</h2>
+    <h2>Om oss</h2>
+    <div class="about">
+      <p>
+        Sham Salong är en modern frisörsalong på Esplanaden 1B som erbjuder fade, klippning, skäggtrimning,
+        hårfärgning, ögonbryn och vaxning. Vi kombinerar erfarenhet med passion för att ge dig en stil du kan vara stolt över.
+      </p>
+    </div>
+  </section>
+
+  <!-- Tjänster -->
+  <section>
+    <h2>Våra tjänster</h2>
+    <div class="services">
+      <div class="service">
+        <h3>Fade</h3>
+        <p>Pris: 250 kr</p>
+      </div>
+      <div class="service">
+        <h3>Skägg</h3>
+        <p>Pris: 150 kr</p>
+      </div>
+      <div class="service">
+        <h3>Färgning</h3>
+        <p>Pris: 600 kr</p>
+      </div>
+      <div class="service">
+        <h3>Barnklippning</h3>
+        <p>Pris: 200 kr</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bokning -->
+  <section class="booking">
+    <h2>Boka din tid</h2>
     <label for="service">Välj tjänst:</label>
     <select id="service">
       <option value="250">Fade - 250 kr</option>
@@ -105,7 +182,7 @@
       <option value="600">Färgning - 600 kr</option>
       <option value="200">Barnklippning (under 12) - 200 kr</option>
     </select>
-    <br><br>
+    <br>
     <button class="btn-swish" onclick="generateSwishQR()">Betala med Swish</button>
     <button class="btn-spot" onclick="payOnSpot()">Betala på plats</button>
 
@@ -113,12 +190,12 @@
     <div id="status"></div>
   </section>
 
-  <section class="about">
-    <h2>Om oss</h2>
-    <p>
-      Sham Salong är en modern frisörsalong på Esplanaden 1B som erbjuder fade, klippning, skäggtrimning,
-      hårfärgning, ögonbryn och vaxning. Vi kombinerar erfarenhet med passion för att ge dig en stil du kan vara stolt över.
-    </p>
+  <!-- Kontakt -->
+  <section class="contact">
+    <h2>Kontakt</h2>
+    <p>📍 Esplanaden 1B</p>
+    <p>📞 0793488688</p>
+    <p>✉️ shamsalong@example.com</p>
   </section>
 
   <script>
