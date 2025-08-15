@@ -2,106 +2,124 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <title>Sham Salong - Bokning & Betalning</title>
+  <title>Sham Salong - Bokning</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #1a001a; /* mörk lila bakgrund */
-      color: #fff;
+      background-color: #2e003e; /* mörk lila bakgrund */
+      color: #f9f871; /* gul text */
+      margin: 0;
+      padding: 0;
       text-align: center;
-      padding: 40px;
     }
 
-    h1, h2 {
-      margin-bottom: 20px;
+    header {
+      background: #4a148c; /* lila header */
+      padding: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      color: #ffd700; /* guld/gul rubrik */
+    }
+
+    section {
+      padding: 40px 20px;
+    }
+
+    h2 {
       color: #ffd700; /* gul rubrik */
     }
 
     select, button {
-      margin: 10px;
-      padding: 12px 18px;
+      margin: 15px;
+      padding: 12px 20px;
       font-size: 16px;
-      border-radius: 8px;
+      border-radius: 6px;
       border: none;
-      transition: all 0.3s ease;
+      outline: none;
     }
 
     select {
       color: #333;
     }
 
-    button {
-      cursor: pointer;
+    .btn-swish {
+      background: #ffd700; /* gul */
+      color: #4a148c; /* mörklila text */
       font-weight: bold;
+      cursor: pointer;
     }
 
-    .btn-swish {
-      background: #ffd700; /* gul knapp */
-      color: #4a148c; /* mörklila text */
-    }
     .btn-swish:hover {
       background: #e6c200;
-      transform: scale(1.05);
     }
 
     .btn-spot {
-      background: #6a1b9a; /* lila knapp */
-      color: #fff200; /* gul text */
+      background: #6a1b9a; /* lila */
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
     }
+
     .btn-spot:hover {
       background: #4a148c;
-      transform: scale(1.05);
     }
 
     #qrcode {
-      margin-top: 20px;
+      margin-top: 30px;
     }
 
     #status {
       margin-top: 20px;
-      font-weight: bold;
       font-size: 18px;
+      font-weight: bold;
       color: #ffd700;
     }
 
     .about {
-      background: rgba(255, 255, 0, 0.1);
-      padding: 25px;
-      margin-top: 50px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      background: #4a148c;
+      color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 800px;
+      margin: 40px auto;
     }
   </style>
 </head>
 <body>
 
-  <h1>Välkommen till Sham Salong</h1>
-  <h2>Boka din tid och välj betalningsmetod</h2>
+  <header>
+    <h1>Sham Salong</h1>
+    <p>Boka din tid enkelt online</p>
+  </header>
 
-  <label for="service">Välj tjänst:</label>
-  <select id="service">
-    <option value="250">Fade - 250 kr</option>
-    <option value="150">Skägg - 150 kr</option>
-    <option value="600">Färgning - 600 kr</option>
-    <option value="200">Barnklippning (under 12) - 200 kr</option>
-  </select>
+  <section>
+    <h2>Boka din tjänst</h2>
+    <label for="service">Välj tjänst:</label>
+    <select id="service">
+      <option value="250">Fade - 250 kr</option>
+      <option value="150">Skägg - 150 kr</option>
+      <option value="600">Färgning - 600 kr</option>
+      <option value="200">Barnklippning (under 12) - 200 kr</option>
+    </select>
+    <br><br>
+    <button class="btn-swish" onclick="generateSwishQR()">Betala med Swish</button>
+    <button class="btn-spot" onclick="payOnSpot()">Betala på plats</button>
 
-  <br><br>
+    <div id="qrcode"></div>
+    <div id="status"></div>
+  </section>
 
-  <button class="btn-swish" onclick="generateSwishQR()">Betala med Swish</button>
-  <button class="btn-spot" onclick="payOnSpot()">Betala på plats</button>
-
-  <div id="qrcode"></div>
-  <div id="status"></div>
-
-  <div class="about">
+  <section class="about">
     <h2>Om oss</h2>
     <p>
       Sham Salong är en modern frisörsalong på Esplanaden 1B som erbjuder fade, klippning, skäggtrimning,
       hårfärgning, ögonbryn och vaxning. Vi kombinerar erfarenhet med passion för att ge dig en stil du kan vara stolt över.
     </p>
-  </div>
+  </section>
 
   <script>
     function generateSwishQR() {
