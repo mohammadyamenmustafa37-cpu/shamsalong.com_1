@@ -6,72 +6,79 @@
   <title>Sham Salong</title>
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom, #4b0082, #ffd700);
-      color: white;
+      background: linear-gradient(135deg, #2e004f, #f5e13c);
+      color: #fff;
     }
+
     header {
-      background: #2c003e;
-      padding: 20px;
-      text-align: center;
+      background: #2e004f;
+      color: #f5e13c;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
-      color: #ffd700;
-    }
-    nav {
-      text-align: right;
-      padding: 10px 20px;
-      background: #3d0066;
-    }
-    nav button {
-      background: #ffd700;
-      color: #4b0082;
+
+    header h1 { margin: 0; font-size: 1.8em; }
+
+    header button {
+      background: #f5e13c;
+      color: #2e004f;
       border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
+      padding: 10px 20px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
     }
-    section {
-      padding: 40px;
-      text-align: center;
-    }
-    .about, .booking, .contact {
-      margin: 50px auto;
-      background: rgba(0,0,0,0.5);
-      padding: 20px;
+
+    section { padding: 40px 20px; text-align: center; }
+
+    #about, #minSida {
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 10px;
-      width: 80%;
+      margin: 30px auto;
+      padding: 30px;
+      max-width: 700px;
     }
-    .booking input, .booking select {
+
+    #booking {
+      margin: 30px auto;
+      padding: 30px;
+      max-width: 600px;
+      background: rgba(46, 0, 79, 0.8);
+      border-radius: 10px;
+    }
+
+    #booking input, #booking button {
       display: block;
       margin: 10px auto;
-      padding: 10px;
-      width: 80%;
+      padding: 12px;
+      width: 90%;
       max-width: 400px;
-      border-radius: 5px;
+      border-radius: 6px;
       border: none;
-    }
-    .booking button {
-      background: #ffd700;
-      color: #4b0082;
-      border: none;
-      padding: 10px 15px;
       font-size: 1em;
+    }
+
+    #booking input {
+      background: #f5e13c;
+      color: #2e004f;
+    }
+
+    #booking button {
+      background: #2e004f;
+      color: #f5e13c;
       font-weight: bold;
-      cursor: pointer;
-      border-radius: 5px;
     }
-    footer {
-      background: #2c003e;
-      text-align: center;
+
+    #contact {
+      background: #2e004f;
+      color: #f5e13c;
       padding: 20px;
-      margin-top: 40px;
     }
+
     /* Popup */
     .popup {
       display: none;
@@ -81,31 +88,39 @@
       background: rgba(0,0,0,0.7);
       justify-content: center;
       align-items: center;
+      z-index: 1000;
     }
+
     .popup-content {
-      background: #fff;
-      color: #000;
+      background: #2e004f;
+      color: #f5e13c;
       padding: 30px;
-      border-radius: 10px;
-      width: 300px;
+      border-radius: 12px;
+      width: 350px;
       text-align: center;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
     }
+
     .popup-content input {
+      display: block;
       width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-    }
-    .popup-content button {
-      margin: 5px;
-      padding: 10px 15px;
+      margin: 10px auto;
+      padding: 12px;
+      border-radius: 6px;
       border: none;
-      cursor: pointer;
-      border-radius: 5px;
+      background: #f5e13c;
+      color: #2e004f;
+      font-size: 1em;
     }
-    .close {
-      float: right;
+
+    .popup-content button {
+      background: #f5e13c;
+      color: #2e004f;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      margin-top: 10px;
       cursor: pointer;
-      color: red;
       font-weight: bold;
     }
   </style>
@@ -114,66 +129,58 @@
 
   <header>
     <h1>Sham Salong</h1>
+    <button onclick="openPopup()">Logga in / Registrera</button>
   </header>
 
-  <nav>
-    <button onclick="openPopup()">Logga in / Registrera</button>
-  </nav>
-
-  <section class="about">
-    <h2>Om oss</h2>
-    <p>Sham Salong erbjuder professionella klippningar, fades, skäggtrimning, vaxning och hårfärgning.
-       Vi brinner för kvalitet och stil – besök oss på Esplanaden 1B!</p>
+  <section id="about">
+    <h2>Om Oss</h2>
+    <p>Välkommen till Sham Salong – din plats för professionella klippningar, fades, skäggtrimning och hårvård.</p>
   </section>
 
-  <section class="booking">
-    <h2>Boka tid</h2>
-    <form id="bookingForm">
-      <input type="text" id="name" placeholder="Ditt namn" required>
-      <input type="text" id="phone" placeholder="Telefonnummer" required>
-      <select id="service" required>
-        <option value="">Välj tjänst</option>
-        <option value="fade">Fade - 250 kr</option>
-        <option value="skägg">Skägg - 150 kr</option>
-        <option value="färgning">Färgning - 600 kr</option>
-        <option value="barn">Barnklippning (under 12 år) - 200 kr</option>
-      </select>
-      <input type="datetime-local" id="date" required>
-      <button type="submit">Boka</button>
-    </form>
+  <section id="booking">
+    <h2>Boka en tid</h2>
+    <input type="text" id="name" placeholder="Ditt namn">
+    <input type="text" id="phone" placeholder="Telefonnummer">
+    <input type="date" id="date">
+    <input type="time" id="time">
+    <button onclick="addBooking()">Boka</button>
   </section>
 
-  <section class="contact">
+  <section id="minSida" style="display:none;">
+    <h2>Min sida</h2>
+    <p>Dina bokningar:</p>
+    <ul id="userBookings"></ul>
+    <button onclick="logout()">Logga ut</button>
+  </section>
+
+  <section id="contact">
     <h2>Kontakta oss</h2>
-    <p>📞 0793488688</p>
-    <p>📧 Shams.barbershop74@gmail.com</p>
-    <p>📍 Esplanaden 1B</p>
+    <p>Telefon: 0793488688</p>
+    <p>Email: shams.barbershop74@gmail.com</p>
+    <p>Adress: Esplanaden 1B</p>
   </section>
-
-  <footer>
-    <p>© 2025 Sham Salong</p>
-  </footer>
 
   <!-- Popup -->
   <div class="popup" id="loginPopup">
     <div class="popup-content">
-      <span class="close" onclick="closePopup()">×</span>
       <h2>Logga in / Registrera</h2>
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="password" placeholder="Lösenord" required>
-      <button onclick="register()">Registrera</button>
+      <input type="email" id="email" placeholder="Email">
+      <input type="password" id="password" placeholder="Lösenord">
       <button onclick="login()">Logga in</button>
+      <button onclick="register()">Registrera</button>
+      <button onclick="closePopup()">Stäng</button>
     </div>
   </div>
 
+  <!-- Firebase -->
   <script type="module">
-    // Firebase import
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc } 
-      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } 
+      from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs, deleteDoc, doc } 
+      from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
+    // Din Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
       authDomain: "shamsalong-6c54c.firebaseapp.com",
@@ -183,61 +190,88 @@
       appId: "1:1023072544720:web:968e31cc9350bc95803bd5"
     };
 
+    // Init Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Popup logic
-    const popup = document.getElementById('loginPopup');
-    function openPopup() { popup.style.display = 'flex'; }
-    function closePopup() { popup.style.display = 'none'; }
-    window.openPopup = openPopup;
-    window.closePopup = closePopup;
+    const loginPopup = document.getElementById("loginPopup");
+    const minSida = document.getElementById("minSida");
+    const bookingsList = document.getElementById("userBookings");
 
-    // Auth functions
-    window.register = async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+    function openPopup() { loginPopup.style.display = "flex"; }
+    function closePopup() { loginPopup.style.display = "none"; }
+
+    async function register() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
       try {
         await createUserWithEmailAndPassword(auth, email, password);
-        alert("Registrering lyckades!");
         closePopup();
-      } catch (err) {
-        alert(err.message);
-      }
-    };
+      } catch (err) { alert(err.message); }
+    }
 
-    window.login = async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        alert("Inloggning lyckades!");
         closePopup();
-      } catch (err) {
-        alert(err.message);
-      }
-    };
+      } catch (err) { alert(err.message); }
+    }
 
-    // Booking form
-    document.getElementById("bookingForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+    async function logout() { await signOut(auth); }
+
+    async function addBooking() {
+      const user = auth.currentUser;
+      if (!user) { alert("Logga in först!"); return; }
+
       const name = document.getElementById("name").value;
       const phone = document.getElementById("phone").value;
-      const service = document.getElementById("service").value;
       const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
 
       try {
         await addDoc(collection(db, "bookings"), {
-          name, phone, service, date
+          uid: user.uid, name, phone, date, time
         });
-        alert("Bokning skickad!");
-        document.getElementById("bookingForm").reset();
-      } catch (err) {
-        alert("Fel: " + err.message);
+        loadBookings(user.uid);
+      } catch (err) { alert(err.message); }
+    }
+
+    async function loadBookings(uid) {
+      bookingsList.innerHTML = "";
+      const q = query(collection(db, "bookings"), where("uid", "==", uid));
+      const snapshot = await getDocs(q);
+      snapshot.forEach(docSnap => {
+        const li = document.createElement("li");
+        li.textContent = `${docSnap.data().date} ${docSnap.data().time} - ${docSnap.data().name}`;
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Ta bort";
+        delBtn.onclick = async () => {
+          await deleteDoc(doc(db, "bookings", docSnap.id));
+          loadBookings(uid);
+        };
+        li.appendChild(delBtn);
+        bookingsList.appendChild(li);
+      });
+    }
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        minSida.style.display = "block";
+        loadBookings(user.uid);
+      } else {
+        minSida.style.display = "none";
       }
     });
-  </script>
 
+    window.openPopup = openPopup;
+    window.closePopup = closePopup;
+    window.register = register;
+    window.login = login;
+    window.logout = logout;
+    window.addBooking = addBooking;
+  </script>
 </body>
 </html>
