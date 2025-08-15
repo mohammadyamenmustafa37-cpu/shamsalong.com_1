@@ -1,236 +1,246 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sham Salong</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #fdfdfd;
+      margin: 0; padding: 0;
+      background-color: #fefefe;
       color: #333;
     }
-
-    /* Hero / Header */
     header {
-      background: linear-gradient(to right, #4a148c, #ffd700);
-      color: white;
-      padding: 100px 20px;
-      text-align: center;
+      background: #4b0082;
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-
-    header h1 {
-      font-size: 3em;
-      margin: 0;
+    header h1 { margin: 0; }
+    nav button {
+      background: #ffd700;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
     }
-
-    header p {
-      font-size: 1.2em;
-    }
-
-    /* Sektioner */
     section {
-      padding: 60px 20px;
-      max-width: 1000px;
+      padding: 40px 20px;
+      max-width: 800px;
       margin: auto;
     }
-
-    section h2 {
-      text-align: center;
-      font-size: 2em;
-      margin-bottom: 30px;
-      color: #4a148c;
+    #about { background: #f2f2f2; }
+    #booking form {
+      display: flex; flex-direction: column; gap: 10px;
     }
-
-    /* Om oss */
-    .about {
-      background-color: #f3e5f5;
-      border-radius: 10px;
-      padding: 30px;
-      line-height: 1.6;
+    #booking input, #booking select {
+      padding: 10px; border: 1px solid #ccc; border-radius: 4px;
     }
-
-    /* Tjänster */
-    .services {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      gap: 20px;
-    }
-
-    .service {
-      flex: 1 1 200px;
-      background-color: #fff8e1;
-      border-radius: 10px;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-
-    .service h3 {
-      color: #4a148c;
-    }
-
-    /* Bokning */
-    .booking select, 
-    .booking button {
-      margin: 10px;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: none;
-      outline: none;
-    }
-
-    .btn-swish {
-      background: #ffd700;
-      color: #4a148c;
-      font-weight: bold;
+    #booking button {
+      background: #4b0082; color: #fff;
+      padding: 10px; border: none; border-radius: 4px;
       cursor: pointer;
     }
-
-    .btn-swish:hover {
-      background: #e6c200;
-    }
-
-    .btn-spot {
-      background: #6a1b9a;
+    #contact {
+      background: #222;
       color: #fff;
-      font-weight: bold;
-      cursor: pointer;
+      text-align: center;
+      padding: 30px 20px;
     }
-
-    .btn-spot:hover {
-      background: #4a148c;
+    /* Popup */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center; align-items: center;
     }
-
-    #qrcode {
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 6px;
+      width: 300px;
+      text-align: center;
+    }
+    .modal-content input {
+      width: 90%; padding: 8px; margin: 5px 0;
+    }
+    .modal-content button {
+      background: #4b0082; color: #fff; padding: 8px; border: none; margin-top: 10px;
+      width: 100%;
+    }
+    #adminPanel {
+      display: none;
+      background: #eee;
+      padding: 20px;
       margin-top: 20px;
-      text-align: center;
     }
-
-    #status {
-      margin-top: 15px;
-      font-weight: bold;
-      text-align: center;
+    #adminPanel h3 { margin-top: 0; }
+    table {
+      width: 100%; border-collapse: collapse;
     }
-
-    /* Kontakt */
-    .contact {
-      background-color: #4a148c;
-      color: white;
-      text-align: center;
-      padding: 40px 20px;
-    }
-
-    .contact p {
-      margin: 5px 0;
+    table th, table td {
+      border: 1px solid #ccc; padding: 8px;
     }
   </style>
 </head>
 <body>
-
-  <!-- Hero -->
   <header>
-    <h1>Välkommen till Sham Salong</h1>
-    <p>Din moderna frisörsalong i hjärtat av staden</p>
+    <h1>Sham Salong</h1>
+    <nav>
+      <button onclick="openModal()">Logga in / Registrera</button>
+    </nav>
   </header>
 
-  <!-- Om oss -->
-  <section>
-    <h2>Om oss</h2>
-    <div class="about">
-      <p>
-        Sham Salong är en modern frisörsalong på Esplanaden 1B som erbjuder fade, klippning, skäggtrimning,
-        hårfärgning, ögonbryn och vaxning. Vi kombinerar erfarenhet med passion för att ge dig en stil du kan vara stolt över.
-      </p>
+  <section id="about">
+    <h2>Om Oss</h2>
+    <p>Välkommen till Sham Salong! Vi erbjuder professionella tjänster inom klippning, fade, ögonbryn, vaxning, skäggtrimning och hårfärgning. Hos oss får du alltid personlig service och högsta kvalitet.</p>
+  </section>
+
+  <section id="booking">
+    <h2>Boka tid</h2>
+    <form id="bookingForm">
+      <input type="text" id="name" placeholder="Ditt namn" required/>
+      <input type="text" id="phone" placeholder="Telefonnummer" required/>
+      <select id="service" required>
+        <option value="">Välj tjänst</option>
+        <option value="Fade">Fade - 250 kr</option>
+        <option value="Skägg">Skägg - 150 kr</option>
+        <option value="Färgning">Färgning - 600 kr</option>
+        <option value="Barnklippning">Barnklippning (under 12) - 200 kr</option>
+      </select>
+      <input type="datetime-local" id="date" required/>
+      <button type="submit">Boka</button>
+    </form>
+  </section>
+
+  <section id="adminPanel">
+    <h3>Admin Panel – Bokningar</h3>
+    <table id="bookingsTable">
+      <thead>
+        <tr><th>Namn</th><th>Telefon</th><th>Tjänst</th><th>Tid</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section id="contact">
+    <h2>Kontakta oss</h2>
+    <p>📍 Adress: Esplanaden 1B</p>
+    <p>📞 Telefon: 0793488688</p>
+    <p>✉️ E-post: Shams.barbershop74@gmail.com</p>
+  </section>
+
+  <!-- Login/Registrering Modal -->
+  <div class="modal" id="authModal">
+    <div class="modal-content">
+      <h3 id="authTitle">Logga in</h3>
+      <input type="email" id="email" placeholder="E-post" required/>
+      <input type="password" id="password" placeholder="Lösenord" required/>
+      <button onclick="login()">Logga in</button>
+      <button onclick="register()">Registrera</button>
+      <button onclick="closeModal()">Stäng</button>
     </div>
-  </section>
+  </div>
 
-  <!-- Tjänster -->
-  <section>
-    <h2>Våra tjänster</h2>
-    <div class="services">
-      <div class="service">
-        <h3>Fade</h3>
-        <p>Pris: 250 kr</p>
-      </div>
-      <div class="service">
-        <h3>Skägg</h3>
-        <p>Pris: 150 kr</p>
-      </div>
-      <div class="service">
-        <h3>Färgning</h3>
-        <p>Pris: 600 kr</p>
-      </div>
-      <div class="service">
-        <h3>Barnklippning</h3>
-        <p>Pris: 200 kr</p>
-      </div>
-    </div>
-  </section>
+  <!-- Firebase & Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs } 
+      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <!-- Bokning -->
-  <section class="booking">
-    <h2>Boka din tid</h2>
-    <label for="service">Välj tjänst:</label>
-    <select id="service">
-      <option value="250">Fade - 250 kr</option>
-      <option value="150">Skägg - 150 kr</option>
-      <option value="600">Färgning - 600 kr</option>
-      <option value="200">Barnklippning (under 12) - 200 kr</option>
-    </select>
-    <br>
-    <button class="btn-swish" onclick="generateSwishQR()">Betala med Swish</button>
-    <button class="btn-spot" onclick="payOnSpot()">Betala på plats</button>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
+      authDomain: "shamsalong-6c54c.firebaseapp.com",
+      projectId: "shamsalong-6c54c",
+      storageBucket: "shamsalong-6c54c.firebasestorage.app",
+      messagingSenderId: "1023072544720",
+      appId: "1:1023072544720:web:968e31cc9350bc95803bd5"
+    };
 
-    <div id="qrcode"></div>
-    <div id="status"></div>
-  </section>
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  <!-- Kontakt -->
-  <section class="contact">
-    <h2>Kontakt</h2>
-    <p>📍 Esplanaden 1B</p>
-    <p>📞 0793488688</p>
-    <p>✉️ shamsalong@example.com</p>
-  </section>
+    // Modal funktioner
+    window.openModal = () => document.getElementById("authModal").style.display = "flex";
+    window.closeModal = () => document.getElementById("authModal").style.display = "none";
 
-  <script>
-    function generateSwishQR() {
-      const swishNumber = "1230711572";  // Ditt Swish-nummer
-      const serviceSelect = document.getElementById("service");
-      const amount = serviceSelect.value;
-      const serviceText = serviceSelect.options[serviceSelect.selectedIndex].text;
+    // Registrering
+    window.register = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        alert("Konto skapat!");
+        closeModal();
+      } catch (e) {
+        alert(e.message);
+      }
+    };
 
-      const message = `Bokning: ${serviceText} hos Sham Salong`;
+    // Login
+    window.login = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("Inloggad!");
+        closeModal();
+      } catch (e) {
+        alert(e.message);
+      }
+    };
 
-      const swishData = `C=SE;A=${swishNumber};AM=${amount};MSG=${encodeURIComponent(message)}`;
+    // Bokningar
+    const bookingForm = document.getElementById("bookingForm");
+    bookingForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const service = document.getElementById("service").value;
+      const date = document.getElementById("date").value;
 
-      document.getElementById("qrcode").innerHTML = "";
-      document.getElementById("status").innerHTML = "";
+      try {
+        await addDoc(collection(db, "bookings"), { name, phone, service, date });
+        alert("Bokning skapad!");
+        bookingForm.reset();
+      } catch (e) {
+        alert("Fel: " + e.message);
+      }
+    });
 
-      new QRCode(document.getElementById("qrcode"), {
-        text: swishData,
-        width: 200,
-        height: 200
+    // Admin – se alla bokningar
+    async function loadBookings() {
+      const querySnapshot = await getDocs(collection(db, "bookings"));
+      const tbody = document.querySelector("#bookingsTable tbody");
+      tbody.innerHTML = "";
+      querySnapshot.forEach(doc => {
+        const b = doc.data();
+        tbody.innerHTML += `<tr>
+          <td>${b.name}</td>
+          <td>${b.phone}</td>
+          <td>${b.service}</td>
+          <td>${b.date}</td>
+        </tr>`;
       });
-
-      document.getElementById("status").innerText = 
-        `Skanna QR-koden i Swish för att betala ${amount} kr (${serviceText}).`;
     }
 
-    function payOnSpot() {
-      const serviceSelect = document.getElementById("service");
-      const serviceText = serviceSelect.options[serviceSelect.selectedIndex].text;
-
-      document.getElementById("qrcode").innerHTML = "";
-      document.getElementById("status").innerText = 
-        `Du har valt att betala på plats för ${serviceText}.`;
-    }
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        if (user.email === "Shams.barbershop74@gmail.com") {
+          document.getElementById("adminPanel").style.display = "block";
+          loadBookings();
+        } else {
+          document.getElementById("adminPanel").style.display = "none";
+        }
+      }
+    });
   </script>
-
 </body>
 </html>
