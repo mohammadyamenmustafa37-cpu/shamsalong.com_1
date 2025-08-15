@@ -1,159 +1,142 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sham Salong</title>
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background-color: #fefefe;
-      color: #333;
+      background-color: #111;
+      color: #fff;
     }
     header {
-      background: #4b0082;
-      color: #fff;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background-color: #222;
+      padding: 20px;
+      text-align: center;
     }
-    header h1 { margin: 0; }
-    nav button {
-      background: #ffd700;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
+    header h1 {
+      margin: 0;
+      color: #f1c40f;
+    }
+    nav {
+      background: #333;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
     }
     section {
       padding: 40px 20px;
       max-width: 800px;
       margin: auto;
     }
-    #about { background: #f2f2f2; }
-    #booking form {
-      display: flex; flex-direction: column; gap: 10px;
+    h2 {
+      color: #9b59b6;
+      margin-bottom: 20px;
     }
-    #booking input, #booking select {
-      padding: 10px; border: 1px solid #ccc; border-radius: 4px;
+    .booking-form input, .booking-form select, .booking-form button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
     }
-    #booking button {
-      background: #4b0082; color: #fff;
-      padding: 10px; border: none; border-radius: 4px;
+    .booking-form button {
+      background: #9b59b6;
+      color: #fff;
+      font-weight: bold;
       cursor: pointer;
     }
-    #contact {
+    .contact {
       background: #222;
-      color: #fff;
       text-align: center;
-      padding: 30px 20px;
+      padding: 30px;
     }
-    /* Popup */
-    .modal {
-      display: none; position: fixed; top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      justify-content: center; align-items: center;
-    }
-    .modal-content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 6px;
-      width: 300px;
-      text-align: center;
-    }
-    .modal-content input {
-      width: 90%; padding: 8px; margin: 5px 0;
-    }
-    .modal-content button {
-      background: #4b0082; color: #fff; padding: 8px; border: none; margin-top: 10px;
-      width: 100%;
-    }
-    #adminPanel {
+    .admin-section {
       display: none;
-      background: #eee;
+      background: #333;
       padding: 20px;
       margin-top: 20px;
     }
-    #adminPanel h3 { margin-top: 0; }
-    table {
-      width: 100%; border-collapse: collapse;
-    }
-    table th, table td {
-      border: 1px solid #ccc; padding: 8px;
+    .booking-item {
+      background: #444;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Sham Salong</h1>
-    <nav>
-      <button onclick="openModal()">Logga in / Registrera</button>
-    </nav>
+    <p>Fade • Klippning • Ögonbryn • Vaxning • Skägg • Färgning</p>
   </header>
+
+  <nav>
+    <a href="#about">Om Oss</a>
+    <a href="#services">Tjänster</a>
+    <a href="#booking">Boka Tid</a>
+    <a href="#contact">Kontakta Oss</a>
+  </nav>
 
   <section id="about">
     <h2>Om Oss</h2>
-    <p>Välkommen till Sham Salong! Vi erbjuder professionella tjänster inom klippning, fade, ögonbryn, vaxning, skäggtrimning och hårfärgning. Hos oss får du alltid personlig service och högsta kvalitet.</p>
+    <p>Sham Salong är platsen där stil möter tradition. Vi erbjuder professionella klippningar, fades, skäggvård och färgning i en modern miljö.</p>
+  </section>
+
+  <section id="services">
+    <h2>Prislista</h2>
+    <ul>
+      <li>Fade: 250 kr</li>
+      <li>Skägg: 150 kr</li>
+      <li>Färgning: 600 kr</li>
+      <li>Klippning barn under 12: 200 kr</li>
+    </ul>
   </section>
 
   <section id="booking">
-    <h2>Boka tid</h2>
-    <form id="bookingForm">
-      <input type="text" id="name" placeholder="Ditt namn" required/>
-      <input type="text" id="phone" placeholder="Telefonnummer" required/>
+    <h2>Boka Tid</h2>
+    <form id="bookingForm" class="booking-form">
+      <input type="text" id="name" placeholder="Namn" required>
+      <input type="tel" id="phone" placeholder="Telefonnummer" required>
       <select id="service" required>
         <option value="">Välj tjänst</option>
-        <option value="Fade">Fade - 250 kr</option>
-        <option value="Skägg">Skägg - 150 kr</option>
-        <option value="Färgning">Färgning - 600 kr</option>
-        <option value="Barnklippning">Barnklippning (under 12) - 200 kr</option>
+        <option value="Fade">Fade</option>
+        <option value="Skägg">Skägg</option>
+        <option value="Färgning">Färgning</option>
+        <option value="Barnklippning">Klippning barn under 12</option>
       </select>
-      <input type="datetime-local" id="date" required/>
+      <input type="date" id="date" required>
+      <input type="time" id="time" required>
       <button type="submit">Boka</button>
     </form>
   </section>
 
-  <section id="adminPanel">
-    <h3>Admin Panel – Bokningar</h3>
-    <table id="bookingsTable">
-      <thead>
-        <tr><th>Namn</th><th>Telefon</th><th>Tjänst</th><th>Tid</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </section>
-
-  <section id="contact">
-    <h2>Kontakta oss</h2>
+  <section id="contact" class="contact">
+    <h2>Kontakta Oss</h2>
     <p>📍 Adress: Esplanaden 1B</p>
     <p>📞 Telefon: 0793488688</p>
-    <p>✉️ E-post: Shams.barbershop74@gmail.com</p>
+    <p>📧 Email: Shams.barbershop74@gmail.com</p>
   </section>
 
-  <!-- Login/Registrering Modal -->
-  <div class="modal" id="authModal">
-    <div class="modal-content">
-      <h3 id="authTitle">Logga in</h3>
-      <input type="email" id="email" placeholder="E-post" required/>
-      <input type="password" id="password" placeholder="Lösenord" required/>
-      <button onclick="login()">Logga in</button>
-      <button onclick="register()">Registrera</button>
-      <button onclick="closeModal()">Stäng</button>
-    </div>
-  </div>
+  <section id="admin" class="admin-section">
+    <h2>Admin - Bokningar</h2>
+    <div id="bookingsList"></div>
+  </section>
 
-  <!-- Firebase & Script -->
+  <!-- Firebase -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } 
-      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs } 
-      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
       authDomain: "shamsalong-6c54c.firebaseapp.com",
@@ -163,41 +146,12 @@
       appId: "1:1023072544720:web:968e31cc9350bc95803bd5"
     };
 
+    // Init Firebase
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
-    // Modal funktioner
-    window.openModal = () => document.getElementById("authModal").style.display = "flex";
-    window.closeModal = () => document.getElementById("authModal").style.display = "none";
-
-    // Registrering
-    window.register = async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        alert("Konto skapat!");
-        closeModal();
-      } catch (e) {
-        alert(e.message);
-      }
-    };
-
-    // Login
-    window.login = async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        alert("Inloggad!");
-        closeModal();
-      } catch (e) {
-        alert(e.message);
-      }
-    };
-
-    // Bokningar
+    // Hantera bokningar
     const bookingForm = document.getElementById("bookingForm");
     bookingForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -205,40 +159,35 @@
       const phone = document.getElementById("phone").value;
       const service = document.getElementById("service").value;
       const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
 
       try {
-        await addDoc(collection(db, "bookings"), { name, phone, service, date });
-        alert("Bokning skapad!");
+        await addDoc(collection(db, "bookings"), {
+          name, phone, service, date, time, created: new Date()
+        });
+        alert("Din bokning har skickats!");
         bookingForm.reset();
-      } catch (e) {
-        alert("Fel: " + e.message);
+      } catch (error) {
+        console.error("Fel vid bokning:", error);
       }
     });
 
-    // Admin – se alla bokningar
-    async function loadBookings() {
-      const querySnapshot = await getDocs(collection(db, "bookings"));
-      const tbody = document.querySelector("#bookingsTable tbody");
-      tbody.innerHTML = "";
-      querySnapshot.forEach(doc => {
-        const b = doc.data();
-        tbody.innerHTML += `<tr>
-          <td>${b.name}</td>
-          <td>${b.phone}</td>
-          <td>${b.service}</td>
-          <td>${b.date}</td>
-        </tr>`;
-      });
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        if (user.email === "Shams.barbershop74@gmail.com") {
-          document.getElementById("adminPanel").style.display = "block";
-          loadBookings();
-        } else {
-          document.getElementById("adminPanel").style.display = "none";
-        }
+    // Visa admin-sektion om admin är inloggad
+    onAuthStateChanged(auth, async (user) => {
+      if (user && user.email === "Shams.barbershop74@gmail.com") {
+        document.getElementById("admin").style.display = "block";
+        const querySnapshot = await getDocs(collection(db, "bookings"));
+        const bookingsList = document.getElementById("bookingsList");
+        bookingsList.innerHTML = "";
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          bookingsList.innerHTML += `
+            <div class="booking-item">
+              <strong>${data.name}</strong> (${data.phone})<br>
+              Tjänst: ${data.service}<br>
+              Datum: ${data.date} kl ${data.time}
+            </div>`;
+        });
       }
     });
   </script>
