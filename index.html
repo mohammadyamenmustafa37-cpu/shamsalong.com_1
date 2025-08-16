@@ -1,94 +1,129 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sham Salong</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fdfdfd; color: #333; }
-    header { background: purple; color: white; text-align: center; padding: 20px; }
-    section { padding: 40px 20px; text-align: center; }
-    h2 { color: purple; }
-
-    /* Bokning */
-    .booking { background: #fff8dc; margin: 20px auto; padding: 20px; border-radius: 8px; max-width: 500px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .booking input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #d4b000; background: #fffff8; }
-    .booking button { background: purple; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
-
-    /* Min sida */
-    #myPage { display: none; background: #f3f3f3; padding: 20px; border-top: 3px solid purple; }
-    .booking-item { background: #fff; margin: 10px auto; padding: 10px; border-radius: 5px; max-width: 500px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    .delete-btn { background: red; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
-
-    /* Kontakt */
-    .contact { background: #eee; padding: 30px; }
-
-    /* Modal */
-    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-    .modal.hidden { display: none; }
-    .modal-content { background: #fffbe6; padding: 20px; border-radius: 10px; text-align: center; width: 300px; box-shadow: 0px 4px 10px rgba(0,0,0,0.4); }
-    .auth-input { width: 90%; margin: 10px 0; padding: 10px; border: 1px solid #d4b000; border-radius: 5px; background: #fffff8; }
-    .auth-btn, .google-btn { width: 100%; padding: 10px; margin-top: 10px; border-radius: 5px; cursor: pointer; }
-    .auth-btn { background: purple; color: white; border: none; }
-    .google-btn { background: #fff; border: 1px solid #ccc; font-weight: bold; }
-
-    /* Toast */
-    .toast { position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; border-radius: 5px; color: white; font-weight: bold; z-index: 10000; animation: fadein 0.3s, fadeout 0.3s 2.7s; }
-    .toast.success { background: green; } .toast.error { background: red; } .toast.info { background: purple; }
-    @keyframes fadein { from {opacity:0;} to {opacity:1;} } @keyframes fadeout { from {opacity:1;} to {opacity:0;} }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1a001a;
+      color: #fff;
+    }
+    header {
+      background: linear-gradient(90deg, purple, gold);
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+    section {
+      padding: 20px;
+      margin: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+    }
+    input, button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+    }
+    input {
+      background: #fffbe6;
+      color: #333;
+    }
+    button {
+      background: purple;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: purple;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 6px;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      z-index: 1000;
+    }
+    #toast.show { opacity: 1; }
+    #toast.success { background: green; }
+    #toast.error { background: red; }
+    #toast.info { background: gold; color: black; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
   <header>
     <h1>Sham Salong</h1>
-    <button onclick="openAuthModal()">Logga in / Registrera</button>
-    <button onclick="logOut()">Logga ut</button>
   </header>
 
-  <!-- Bokning -->
-  <section>
-    <div class="booking">
-      <h2>Boka en tid</h2>
-      <input type="text" id="bookName" placeholder="Ditt namn">
-      <input type="text" id="bookService" placeholder="Tjänst (t.ex. Klippning)">
-      <input type="datetime-local" id="bookTime">
-      <button onclick="makeBooking()">Boka</button>
-    </div>
+  <!-- Auth sektion -->
+  <section id="auth">
+    <h2>Registrera / Logga in</h2>
+    <input type="email" id="email" placeholder="E-post" />
+    <input type="password" id="password" placeholder="Lösenord" />
+
+    <button onclick="setAuthMode('register')">Registrera</button>
+    <button onclick="setAuthMode('login')">Logga in</button>
+    <button onclick="logout()">Logga ut</button>
+
+    <!-- Google-knapp -->
+    <button id="googleBtn" onclick="googleSignIn()">Logga in med Google</button>
   </section>
 
-  <!-- Min sida -->
-  <section id="myPage">
-    <h2>Min sida – Mina bokningar</h2>
-    <div id="bookingList"></div>
+  <!-- Bokningssektion -->
+  <section id="booking" class="hidden">
+    <h2>Boka tid</h2>
+    <input type="text" id="service" placeholder="Tjänst (t.ex. Klippning)" />
+    <input type="date" id="date" />
+    <input type="time" id="time" />
+    <button onclick="makeBooking()">Boka</button>
+  </section>
+
+  <!-- Min Sida -->
+  <section id="myPage" class="hidden">
+    <h2>Mina bokningar</h2>
+    <ul id="myBookings"></ul>
+  </section>
+
+  <!-- Admin -->
+  <section id="adminPanel" class="hidden">
+    <h2>Admin Panel</h2>
+    <ul id="allBookings"></ul>
   </section>
 
   <!-- Kontakt -->
-  <section class="contact">
+  <section id="contact">
     <h2>Kontakta oss</h2>
-    <p>📍 Esplanaden 1B</p>
     <p>📞 0793488688</p>
-    <p>✉️ Shams.barbershop74@gmail.com</p>
+    <p>📧 Shams.barbershop74@gmail.com</p>
+    <p>📍 Esplanaden 1B</p>
   </section>
 
-  <!-- Login/Register Modal -->
-  <div id="authModal" class="modal hidden">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeAuthModal()">&times;</span>
-      <h2 id="authTitle">Logga in</h2>
-      <input type="email" id="email" placeholder="E-post" class="auth-input">
-      <input type="password" id="password" placeholder="Lösenord" class="auth-input">
-      <button onclick="handleAuth()" class="auth-btn">Fortsätt</button>
-      <button onclick="signInWithGoogle()" class="google-btn">Sign in with Google</button>
-      <p id="toggleText">Har du inget konto? <a href="#" onclick="toggleAuth()">Registrera dig</a></p>
-    </div>
-  </div>
+  <!-- Toast -->
+  <div id="toast"></div>
 
+  <!-- Firebase SDK -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // 🔑 Firebase config
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
       authDomain: "shamsalong-6c54c.firebaseapp.com",
@@ -100,95 +135,137 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
     const db = getFirestore(app);
-
-    let isLogin = true;
-    let currentUser = null;
-
-    // Auth Modal
-    window.openAuthModal = () => document.getElementById("authModal").classList.remove("hidden");
-    window.closeAuthModal = () => document.getElementById("authModal").classList.add("hidden");
-
-    // Växla login/register
-    window.toggleAuth = () => {
-      isLogin = !isLogin;
-      document.getElementById("authTitle").innerText = isLogin ? "Logga in" : "Registrera dig";
-      document.getElementById("toggleText").innerHTML = isLogin 
-        ? `Har du inget konto? <a href="#" onclick="toggleAuth()">Registrera dig</a>` 
-        : `Har du redan ett konto? <a href="#" onclick="toggleAuth()">Logga in</a>`;
-    }
-
-    // Login/Register
-    window.handleAuth = async () => {
-      const email = emailInput.value, password = passwordInput.value;
-      try {
-        if (isLogin) await signInWithEmailAndPassword(auth, email, password);
-        else await createUserWithEmailAndPassword(auth, email, password);
-        closeAuthModal();
-      } catch (e) { showToast("❌ " + e.message, "error"); }
-    }
-
-    // Google
-    window.signInWithGoogle = async () => {
-      try { await signInWithPopup(auth, provider); closeAuthModal(); }
-      catch (e) { showToast("❌ " + e.message, "error"); }
-    }
-
-    // Logout
-    window.logOut = () => signOut(auth);
-
-    // Spara bokning i Firestore
-    window.makeBooking = async () => {
-      if (!currentUser) return showToast("❌ Logga in först!", "error");
-      const name = bookName.value, service = bookService.value, time = bookTime.value;
-      if (!name || !service || !time) return showToast("❌ Fyll i alla fält", "error");
-      try {
-        await addDoc(collection(db, "bookings"), { uid: currentUser.uid, name, service, time });
-        showToast("✅ Bokning sparad", "success");
-        loadBookings();
-      } catch (e) { showToast("❌ " + e.message, "error"); }
-    }
-
-    // Hämta bokningar
-    async function loadBookings() {
-      if (!currentUser) return;
-      const q = query(collection(db, "bookings"), where("uid", "==", currentUser.uid));
-      const snap = await getDocs(q);
-      const list = document.getElementById("bookingList");
-      list.innerHTML = "";
-      snap.forEach(docSnap => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "booking-item";
-        div.innerHTML = `<span>${data.name} – ${data.service} – ${data.time}</span>
-                         <button class="delete-btn" onclick="deleteBooking('${docSnap.id}')">X</button>`;
-        list.appendChild(div);
-      });
-    }
-
-    // Ta bort bokning
-    window.deleteBooking = async (id) => {
-      await deleteDoc(doc(db, "bookings", id));
-      showToast("❌ Bokning borttagen", "info");
-      loadBookings();
-    }
-
-    // Auth state
-    onAuthStateChanged(auth, user => {
-      currentUser = user;
-      document.getElementById("myPage").style.display = user ? "block" : "none";
-      if (user) loadBookings();
-    });
+    const provider = new GoogleAuthProvider();
 
     // Toast
     function showToast(msg, type="info") {
-      const t = document.createElement("div");
-      t.className = "toast " + type;
-      t.innerText = msg;
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 3000);
+      const toast = document.getElementById("toast");
+      toast.innerText = msg;
+      toast.className = "show " + type;
+      setTimeout(() => { toast.className = toast.className.replace("show",""); }, 3000);
     }
+
+    // Auth Mode
+    let authMode = "login";
+    const googleBtn = document.getElementById("googleBtn");
+
+    window.setAuthMode = function(mode) {
+      authMode = mode;
+      googleBtn.innerText = mode === "register" ? "Registrera med Google" : "Logga in med Google";
+    };
+
+    window.googleSignIn = async function() {
+      try {
+        await signInWithPopup(auth, provider);
+        showToast(authMode === "register" ? "Registrering med Google lyckades!" : "Inloggning lyckades!", "success");
+      } catch (e) {
+        showToast("Fel: " + e.message, "error");
+      }
+    };
+
+    window.logout = async function() {
+      await signOut(auth);
+      showToast("Utloggad", "info");
+    };
+
+    // Email login/registrering
+    document.querySelector("button[onclick*='login']").addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        showToast("Inloggad!", "success");
+      } catch(e) {
+        showToast("Fel: " + e.message, "error");
+      }
+    });
+
+    document.querySelector("button[onclick*='register']").addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        showToast("Registrering lyckades!", "success");
+      } catch(e) {
+        showToast("Fel: " + e.message, "error");
+      }
+    });
+
+    // Bokningar
+    window.makeBooking = async function() {
+      const service = document.getElementById("service").value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      const user = auth.currentUser;
+
+      if (!user) {
+        showToast("Logga in för att boka!", "error");
+        return;
+      }
+
+      await addDoc(collection(db, "bookings"), {
+        uid: user.uid,
+        service, date, time
+      });
+      showToast("Bokning skapad!", "success");
+      loadBookings();
+    };
+
+    async function loadBookings() {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const q = query(collection(db, "bookings"), where("uid", "==", user.uid));
+      const snap = await getDocs(q);
+
+      const myList = document.getElementById("myBookings");
+      myList.innerHTML = "";
+      snap.forEach(docSnap => {
+        const li = document.createElement("li");
+        li.innerHTML = `${docSnap.data().service} - ${docSnap.data().date} ${docSnap.data().time} 
+        <button onclick="deleteBooking('${docSnap.id}')">❌</button>`;
+        myList.appendChild(li);
+      });
+    }
+
+    window.deleteBooking = async function(id) {
+      await deleteDoc(doc(db, "bookings", id));
+      showToast("Bokning borttagen", "info");
+      loadBookings();
+    };
+
+    async function loadAllBookings() {
+      const snap = await getDocs(collection(db, "bookings"));
+      const list = document.getElementById("allBookings");
+      list.innerHTML = "";
+      snap.forEach(docSnap => {
+        const d = docSnap.data();
+        const li = document.createElement("li");
+        li.textContent = `${d.service} - ${d.date} ${d.time} (UID: ${d.uid})`;
+        list.appendChild(li);
+      });
+    }
+
+    // Admin credentials
+    const adminEmail = "Shams.barbershop74@gmail.com";
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        document.getElementById("booking").classList.remove("hidden");
+        document.getElementById("myPage").classList.remove("hidden");
+        loadBookings();
+
+        if (user.email === adminEmail) {
+          document.getElementById("adminPanel").classList.remove("hidden");
+          loadAllBookings();
+        }
+      } else {
+        document.getElementById("booking").classList.add("hidden");
+        document.getElementById("myPage").classList.add("hidden");
+        document.getElementById("adminPanel").classList.add("hidden");
+      }
+    });
   </script>
 </body>
 </html>
