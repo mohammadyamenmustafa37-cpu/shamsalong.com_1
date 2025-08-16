@@ -12,8 +12,9 @@
     .hidden { display:none; }
     /* Modal */
     .modal { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center;}
-    .modal-content { background:#fffbea; padding:2rem; border-radius:8px; width:300px; text-align:center;}
+    .modal-content { background:#fffbea; padding:2rem; border-radius:8px; width:300px; text-align:center; position:relative;}
     .modal-content input { display:block; margin:0.5rem auto; width:90%; padding:0.5rem; border:1px solid #FFD700; border-radius:4px; background:#fffdf3;}
+    .close-btn { position:absolute; top:10px; right:10px; cursor:pointer; font-size:18px; font-weight:bold; }
     /* Toast */
     .toast { position:fixed; bottom:20px; right:20px; background:#4B0082; color:#FFD700; padding:10px 20px; border-radius:6px; opacity:0.95; display:none;}
     .toast.success { background:green; color:white; }
@@ -72,13 +73,14 @@
   <!-- Modal -->
   <div id="authModal" class="modal hidden">
     <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
       <h2 id="modalTitle">Logga in</h2>
       <input id="email" type="email" placeholder="Email"/>
       <input id="password" type="password" placeholder="Lösenord"/>
       <button onclick="handleAuth()">Fortsätt</button>
       <button onclick="googleAuth()" style="margin-top:10px;">Google</button>
       <br/>
-      <button onclick="closeModal()">Stäng</button>
+      <button onclick="closeModal()" style="margin-top:10px;">Stäng</button>
     </div>
   </div>
 
@@ -111,7 +113,7 @@
     const db = getFirestore(app);
 
     let currentMode = "login";
-    const ADMIN_EMAIL = "admin@shamsalong.se"; // 👈 ändra detta till din admin-mail
+    const ADMIN_EMAIL = "admin@shamsalong.se";
 
     function showToast(msg,type="info"){ 
       const toast=document.getElementById("toast"); 
@@ -146,7 +148,12 @@
       catch(e){ showToast(e.message,"error"); }
     }
 
-    window.logout=async function(){ await signOut(auth); showToast("Du är nu utloggad","info"); }
+    window.logout=async function(){ 
+      await signOut(auth); 
+      showToast("Du är nu utloggad","info"); 
+      document.getElementById("myPage").classList.add("hidden");
+      document.getElementById("adminPage").classList.add("hidden");
+    }
 
     window.makeBooking=async function(){
       const name=document.getElementById("bookingName").value;
@@ -203,19 +210,5 @@
       }
     });
   </script>
-  <!-- 🔒 Login/Register Modal -->
-<div id="authModal" class="modal">
-  <div class="modal-content">
-    <span id="closeModal" class="close">&times;</span>
-    <h2 id="authTitle">Logga in</h2>
-
-    <input type="email" id="email" placeholder="E-post">
-    <input type="password" id="password" placeholder="Lösenord">
-    <button id="authButton">Logga in</button>
-
-    <div style="margin: 15px 0;">eller</div>
-    <button id="googleButton">Logga in med Google</button>
-  </div>
-</div>
 </body>
 </html>
