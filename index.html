@@ -100,7 +100,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import { getFirestore, collection, addDoc, setDoc, serverTimestamp, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -142,13 +142,40 @@
       await createUserDoc(userCredential.user);
       showToast(currentMode==="login"?"Inloggad!":"Registrerad!","green");
       closeModal();
+      loadDashboard(userCredential.user);
     }catch(err){showToast(err.message,"red");}
   });
 
   function logout(){
     if(unsubscribeBookings) unsubscribeBookings();
     unsubscribeBookings=null;
-    signOut(auth).then(()=>showToast("Utloggad!","green"));
+    signOut(auth).then(()=>{
+      document.getElementById("dashboard").style.display="none";
+      document.getElementById("loginBtn").style.display="inline-block";
+      document.getElementById("registerBtn").style.display="inline-block";
+      document.getElementById("logoutBtn").style.display="none";
+      document.getElementById("userName").textContent="";
+      showToast("Utloggad!","green");
+    });
+  }
+
+  function loadDashboard(user){
+    document.getElementById("dashboard").style.display="block";
+    document.getElementById("loginBtn").style.display="none";
+    document.getElementById("registerBtn").style.display="none";
+    document.getElementById("logoutBtn").style.display="inline-block";
+    document.getElementById("userName").textContent = `Välkommen, ${user.email}`;
+    const bookingsRef = collection(db,"users",user.uid,"bookings");
+    unsubscribeBookings = onSnapshot(bookingsRef, snapshot=>{
+      const userBookings = document.getElementById("userBookings");
+      userBookings.innerHTML="";
+      snapshot.forEach(docSnap=>{
+        const booking = docSnap.data();
+        const li = document.createElement("li");
+        li.textContent = `${booking.service} - ${booking.time}`;
+        userBookings.appendChild(li);
+      });
+    });
   }
 
   // Guest booking form
@@ -164,48 +191,8 @@
       e.target.reset();
     }catch(err){showToast(err.message,"red");}
   });
-
-  onAuthStateChanged(auth, user=>{
-    const dashboard=document.getElementById("dashboard");
-    const loginBtn=document.getElementById("loginBtn");
-    const registerBtn=document.getElementById("registerBtn");
-    const logoutBtn=document.getElementById("logoutBtn");
-    const userName=document.getElementById("userName");
-    const welcomeMsg=document.getElementById("welcomeMsg");
-    const userBookings=document.getElementById("userBookings");
-
-    if(user){
-      dashboard.style.display="block";
-      loginBtn.style.display="none";
-      registerBtn.style.display="none";
-      logoutBtn.style.display="inline-block";
-      userName.textContent = `Välkommen, ${user.email}`;
-      welcomeMsg.textContent = "Här är dina bokningar:";
-
-      const bookingsRef = collection(db,"users",user.uid,"bookings");
-      unsubscribeBookings = onSnapshot(bookingsRef, snapshot=>{
-        userBookings.innerHTML="";
-        snapshot.forEach(docSnap=>{
-          const booking = docSnap.data();
-          const li = document.createElement("li");
-          li.textContent = `${booking.service} - ${booking.time}`;
-          userBookings.appendChild(li);
-        });
-      });
-    } else {
-      dashboard.style.display="none";
-      loginBtn.style.display="inline-block";
-      registerBtn.style.display="inline-block";
-      logoutBtn.style.display="none";
-      userName.textContent="";
-      if(unsubscribeBookings) unsubscribeBookings();
-      unsubscribeBookings=null;
-    }
-  });
 </script>
 
-<!-- Calendly widget -->
 <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-
 </body>
 </html>
