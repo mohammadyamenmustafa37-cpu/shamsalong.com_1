@@ -6,225 +6,139 @@
   <title>Sham Salong</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Loading bar at top */
-    #loadingBar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 4px;
-      background: linear-gradient(to right, #4B0082, #FFD700);
-      width: 0%;
-      z-index: 9999;
-      transition: width 0.4s ease;
-    }
-
-    /* Shine effect on booking forms */
+    body { background: linear-gradient(to right, #4B0082, #FFD700); }
     .shine {
       position: relative;
       overflow: hidden;
     }
-    .shine::before {
+    .shine::after {
       content: "";
       position: absolute;
-      top: 0;
-      left: -100%;
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-      transform: skewX(-25deg);
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.6), transparent);
+      animation: shine 3s infinite;
     }
-    .shine:hover::before {
-      animation: shineMove 1.2s ease forwards;
-    }
-    @keyframes shineMove {
-      100% { left: 200%; }
+    @keyframes shine {
+      0% { left: -100%; }
+      100% { left: 100%; }
     }
   </style>
 </head>
-<body class="bg-gradient-to-r from-purple-900 via-purple-800 to-yellow-400 text-white min-h-screen flex flex-col">
-
-  <!-- Loading bar -->
-  <div id="loadingBar"></div>
+<body class="text-white font-sans">
 
   <!-- Header -->
-  <header class="bg-black bg-opacity-70 flex flex-col md:flex-row justify-between items-center p-4">
-    <h1 class="text-2xl font-bold mb-2 md:mb-0">Sham Salong</h1>
-    <div class="flex flex-row items-center gap-2">
-      <span id="userName" class="font-semibold"></span>
-      <button id="loginBtn" class="bg-yellow-400 text-black px-4 py-2 rounded font-bold" onclick="openModal('login')">Logga in</button>
-      <button id="registerBtn" class="bg-yellow-400 text-black px-4 py-2 rounded font-bold" onclick="openModal('register')">Registrera</button>
-      <button id="logoutBtn" class="bg-red-600 text-white px-4 py-2 rounded font-bold hidden" onclick="logout()">Logga ut</button>
-    </div>
+  <header class="flex items-center p-4 bg-purple-900 shadow-md">
+    <img src="48BD6280-4E8E-4413-8D75-E65A07139B06.jpeg" alt="Sham Salong Logo" class="h-12 mr-4">
+    <h1 class="text-2xl font-bold">Sham Salong</h1>
   </header>
 
-  <!-- About Section -->
-  <section class="bg-purple-900 bg-opacity-80 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-3xl mb-4">Om oss</h2>
-    <p>Sham Salong erbjuder kvalitativa klippningar, skäggvård och färgning i hjärtat av staden – din lokala premium barbershop.</p>
-  </section>
-
   <!-- Guest Booking Form -->
-  <section id="guestBookingSection" class="shine bg-black bg-opacity-70 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-2xl mb-4">Boka som gäst</h2>
-    <form id="guestBookingForm" class="flex flex-col gap-4">
-      <input type="text" id="guestName" placeholder="Ditt namn" class="p-2 rounded text-black" required>
-      <input type="text" id="guestPhone" placeholder="Telefonnummer" class="p-2 rounded text-black" required>
-      <select id="guestService" class="p-2 rounded text-black" required>
-        <option value="">Välj tjänst</option>
-        <option value="fade">Fade - 250 kr</option>
-        <option value="skägg">Skägg - 150 kr</option>
-        <option value="färgning">Färgning - 600 kr</option>
-        <option value="barn">Barnklippning - 200 kr</option>
+  <section id="guestForm" class="max-w-md mx-auto mt-10 bg-white text-black p-6 rounded-lg shadow-lg">
+    <h2 class="text-xl font-bold mb-4 shine">Boka som gäst</h2>
+    <form id="guestBookingForm">
+      <input type="text" placeholder="Namn" class="w-full p-2 mb-3 border rounded" required>
+      <input type="email" placeholder="E-post" class="w-full p-2 mb-3 border rounded" required>
+      <input type="tel" placeholder="Telefonnummer" class="w-full p-2 mb-3 border rounded" required>
+
+      <label class="block mb-2">Tjänst:</label>
+      <select id="guestService" class="w-full p-2 mb-3 border rounded" required>
+        <option value="" disabled selected>Välj tjänst</option>
+        <option value="Fade" data-price="250">Fade - 250kr</option>
+        <option value="Skägg" data-price="150">Skägg - 150kr</option>
+        <option value="Färgning" data-price="600">Färgning - 600kr</option>
+        <option value="Barnklippning" data-price="200">Barnklippning - 200kr</option>
+        <option value="Other" data-price="0">Annat</option>
       </select>
-      <input type="datetime-local" id="guestTime" class="p-2 rounded text-black" required>
-      <button type="submit" class="bg-yellow-400 text-black font-bold py-2 rounded">Boka som gäst</button>
+      <input type="text" id="guestOtherService" placeholder="Beskriv tjänsten" class="hidden w-full p-2 mb-3 border rounded">
+
+      <label class="block mb-2">Tid:</label>
+      <input type="datetime-local" class="w-full p-2 mb-3 border rounded" required>
+
+      <button type="button" id="guestCheckout" class="w-full bg-purple-700 hover:bg-purple-800 text-white p-3 rounded">
+        Gå till betalning
+      </button>
     </form>
   </section>
 
-  <!-- Logged-in Booking Section -->
-  <section id="userBookingSection" class="shine hidden bg-black bg-opacity-70 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-2xl mb-4">Min bokning</h2>
-    <div id="userBookings" class="flex flex-col gap-4"></div>
-    <p class="mt-4 text-yellow-400">Klicka på en bokning för att redigera tid eller tjänst.</p>
+  <!-- Logged-in Booking Form -->
+  <section id="loggedForm" class="max-w-md mx-auto mt-10 bg-white text-black p-6 rounded-lg shadow-lg hidden">
+    <h2 class="text-xl font-bold mb-4 shine">Boka som inloggad</h2>
+    <form id="loggedBookingForm">
+      <label class="block mb-2">Tjänst:</label>
+      <select id="loggedService" class="w-full p-2 mb-3 border rounded" required>
+        <option value="" disabled selected>Välj tjänst</option>
+        <option value="Fade" data-price="250">Fade - 250kr</option>
+        <option value="Skägg" data-price="150">Skägg - 150kr</option>
+        <option value="Färgning" data-price="600">Färgning - 600kr</option>
+        <option value="Barnklippning" data-price="200">Barnklippning - 200kr</option>
+        <option value="Other" data-price="0">Annat</option>
+      </select>
+      <input type="text" id="loggedOtherService" placeholder="Beskriv tjänsten" class="hidden w-full p-2 mb-3 border rounded">
+
+      <label class="block mb-2">Tid:</label>
+      <input type="datetime-local" class="w-full p-2 mb-3 border rounded" required>
+
+      <button type="button" id="loggedCheckout" class="w-full bg-purple-700 hover:bg-purple-800 text-white p-3 rounded">
+        Gå till betalning
+      </button>
+    </form>
   </section>
 
-  <!-- Inline Calendly -->
-  <section class="shine bg-black bg-opacity-70 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-2xl mb-4">Boka via Calendly</h2>
-    <div class="calendly-inline-widget" data-url="https://calendly.com/mohammadyamenmustafa37?background_color=4b0082&text_color=ffffff&primary_color=ffd700" style="min-width:320px;height:700px;"></div>
+  <!-- Checkout Section -->
+  <section id="checkoutSection" class="max-w-md mx-auto mt-10 bg-white text-black p-6 rounded-lg shadow-lg hidden">
+    <h2 class="text-xl font-bold mb-4">Kassa</h2>
+    <p><strong>Tjänst:</strong> <span id="checkoutService"></span></p>
+    <p><strong>Pris:</strong> <span id="checkoutPrice"></span> kr</p>
+    <a id="swishButton" href="#" 
+       class="block w-full text-center bg-green-600 hover:bg-green-700 text-white p-3 rounded mt-4">
+       Betala med Swish
+    </a>
   </section>
 
-  <!-- Contact -->
-  <section class="bg-purple-900 bg-opacity-80 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-2xl mb-4">Kontakta oss</h2>
-    <p>📞 0793488688</p>
-    <p>📧 shams.barbershop74@gmail.com</p>
-    <p>📍 Esplanaden 1B</p>
-  </section>
-
-  <!-- Auth Modal -->
-  <div id="authModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center hidden z-50">
-    <div class="bg-white text-black p-6 rounded-lg w-11/12 max-w-md relative">
-      <button class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8" onclick="closeModal()">×</button>
-      <h3 id="modalTitle" class="text-2xl font-bold mb-4">Logga in</h3>
-      <input type="email" id="email" placeholder="Email" class="w-full p-2 rounded mb-2">
-      <input type="password" id="password" placeholder="Lösenord" class="w-full p-2 rounded mb-2">
-      <button id="authSubmit" class="w-full bg-yellow-400 text-black py-2 rounded font-bold">Skicka</button>
-    </div>
-  </div>
-
-  <!-- Toast -->
-  <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-80 text-white px-4 py-2 rounded hidden"></div>
-
-  <!-- Firebase & Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
-      authDomain: "shamsalong-6c54c.firebaseapp.com",
-      projectId: "shamsalong-6c54c",
-      storageBucket: "shamsalong-6c54c.appspot.com",
-      messagingSenderId: "1023072544720",
-      appId: "1:1023072544720:web:968e31cc9350bc95803bd5"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    let currentMode = "login";
-
-    const guestSection = document.getElementById("guestBookingSection");
-    const userSection = document.getElementById("userBookingSection");
-    const userBookings = document.getElementById("userBookings");
-
-    const toast = document.getElementById("toast");
-    function showToast(msg, color="black"){
-      toast.textContent = msg;
-      toast.style.backgroundColor = color;
-      toast.classList.remove("hidden");
-      setTimeout(()=>toast.classList.add("hidden"),3000);
-    }
-
-    // Modal
-    window.openModal = (mode)=>{
-      currentMode = mode;
-      document.getElementById("modalTitle").textContent = mode === "login" ? "Logga in" : "Registrera";
-      document.getElementById("authModal").classList.remove("hidden");
-    }
-    window.closeModal = ()=>document.getElementById("authModal").classList.add("hidden");
-
-    // Auth submit
-    document.getElementById("authSubmit").addEventListener("click", async ()=>{
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-      try{
-        let userCredential;
-        if(currentMode==="login") userCredential = await signInWithEmailAndPassword(auth,email,pass);
-        else userCredential = await createUserWithEmailAndPassword(auth,email,pass);
-        showToast(currentMode==="login"?"Inloggad!":"Registrerad!","green");
-        closeModal();
-      }catch(err){
-        showToast(err.message,"red");
-      }
-    });
-
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", ()=>{
-      signOut(auth).then(()=>{
-        guestSection.classList.remove("hidden");
-        userSection.classList.add("hidden");
-        document.getElementById("userName").textContent = "";
-        document.getElementById("loginBtn").classList.remove("hidden");
-        document.getElementById("registerBtn").classList.remove("hidden");
-        document.getElementById("logoutBtn").classList.add("hidden");
-        showToast("Utloggad!","green");
+  <script>
+    // Show Other service input dynamically
+    function toggleOtherService(selectId, inputId) {
+      const serviceSelect = document.getElementById(selectId);
+      const otherInput = document.getElementById(inputId);
+      serviceSelect.addEventListener("change", () => {
+        if (serviceSelect.value === "Other") {
+          otherInput.classList.remove("hidden");
+          otherInput.required = true;
+        } else {
+          otherInput.classList.add("hidden");
+          otherInput.required = false;
+        }
       });
-    });
+    }
+    toggleOtherService("guestService", "guestOtherService");
+    toggleOtherService("loggedService", "loggedOtherService");
 
-    // Guest booking form
-    document.getElementById("guestBookingForm").addEventListener("submit", e=>{
-      e.preventDefault();
-      showToast("Bokning skapad för gäst!","green");
-      e.target.reset();
-    });
+    // Handle checkout process
+    function setupCheckout(buttonId, serviceId, otherId) {
+      document.getElementById(buttonId).addEventListener("click", () => {
+        const serviceSelect = document.getElementById(serviceId);
+        const otherInput = document.getElementById(otherId);
+        const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+        let service = serviceSelect.value;
+        let price = selectedOption.dataset.price;
 
-    // Handle auth state
-    onAuthStateChanged(auth, user=>{
-      if(user){
-        document.getElementById("userName").textContent = `Välkommen, ${user.email}`;
-        guestSection.classList.add("hidden");
-        userSection.classList.remove("hidden");
-        document.getElementById("loginBtn").classList.add("hidden");
-        document.getElementById("registerBtn").classList.add("hidden");
-        document.getElementById("logoutBtn").classList.remove("hidden");
+        if (service === "Other" && otherInput.value.trim() !== "") {
+          service = otherInput.value;
+        }
 
-        // Example: Populate user bookings (mock, replace with real backend if needed)
-        userBookings.innerHTML = '';
-        const exampleBooking = document.createElement("div");
-        exampleBooking.className = "bg-yellow-400 text-black p-2 rounded cursor-pointer";
-        exampleBooking.textContent = "Fade - 2025-08-20 14:00";
-        userBookings.appendChild(exampleBooking);
+        document.getElementById("checkoutService").textContent = service;
+        document.getElementById("checkoutPrice").textContent = price;
 
-        // Editable booking click
-        exampleBooking.addEventListener("click", ()=>{
-          const newService = prompt("Ange ny tjänst:", "Fade");
-          const newTime = prompt("Ange ny tid:", "2025-08-20 14:00");
-          if(newService && newTime) exampleBooking.textContent = `${newService} - ${newTime}`;
-        });
+        const swishLink = `swish://payment?payee=1230711572&amount=${price}&message=${encodeURIComponent(service)}`;
+        document.getElementById("swishButton").setAttribute("href", swishLink);
 
-      } else {
-        guestSection.classList.remove("hidden");
-        userSection.classList.add("hidden");
-        document.getElementById("loginBtn").classList.remove("hidden");
-        document.getElementById("registerBtn").classList.remove("hidden");
-        document.getElementById("logoutBtn").classList.add("hidden");
-        document.getElementById("userName").textContent = "";
-      }
-    });
+        document.getElementById("checkoutSection").classList.remove("hidden");
+        document.getElementById("checkoutSection").scrollIntoView({ behavior: "smooth" });
+      });
+    }
+    setupCheckout("guestCheckout", "guestService", "guestOtherService");
+    setupCheckout("loggedCheckout", "loggedService", "loggedOtherService");
   </script>
-
-  <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 </body>
 </html>
