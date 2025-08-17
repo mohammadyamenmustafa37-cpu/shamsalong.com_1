@@ -4,116 +4,124 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sham Salong</title>
+  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Shine effect for premium feel */
-    .shiny {
-      position: relative;
-      overflow: hidden;
-    }
-    .shiny::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -75%;
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
-      transform: skewX(-25deg);
-      transition: all 0.7s ease-in-out;
-    }
-    .shiny:hover::before {
-      left: 125%;
+    /* Custom Colors */
+    :root {
+      --purple: #4B0082;
+      --gold: #FFD700;
+      --white: #ffffff;
     }
 
-    /* Loading bar under URL bar */
+    /* Loading Bar */
     #loadingBar {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       height: 4px;
-      background: linear-gradient(to right, #8B5CF6, #FFD700);
+      background: linear-gradient(90deg, var(--gold), var(--purple));
       width: 0%;
-      z-index: 5000;
+      z-index: 9999;
       transition: width 0.4s ease;
+    }
+
+    /* Shine effect */
+    .shine::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(120deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 60%);
+      transform: rotate(25deg);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+    }
+    .shine:hover::before {
+      opacity: 1;
+      animation: shineAnim 1s forwards;
+    }
+    @keyframes shineAnim {
+      0% { transform: translateX(-100%) rotate(25deg); }
+      100% { transform: translateX(100%) rotate(25deg); }
     }
   </style>
 </head>
-<body class="bg-gradient-to-r from-purple-900 to-yellow-400 text-white font-sans">
+<body class="bg-gradient-to-r from-purple-900 to-yellow-400 text-white font-sans relative">
 
   <!-- Loading Bar -->
   <div id="loadingBar"></div>
 
   <!-- Header -->
-  <header class="bg-black bg-opacity-70 p-5 flex flex-col md:flex-row justify-between items-center">
-    <h1 class="text-2xl font-bold">Sham Salong</h1>
-    <div class="flex flex-col md:flex-row gap-3 items-end">
-      <span id="userName" class="font-semibold"></span>
-      <button id="loginBtn" onclick="openModal('login')" class="shiny px-4 py-2 rounded font-bold bg-yellow-400 text-black hover:scale-105 transition">Logga in</button>
-      <button id="registerBtn" onclick="openModal('register')" class="shiny px-4 py-2 rounded font-bold bg-yellow-400 text-black hover:scale-105 transition">Registrera</button>
-      <button id="logoutBtn" onclick="logout()" class="shiny px-4 py-2 rounded font-bold bg-yellow-400 text-black hover:scale-105 transition hidden">Logga ut</button>
+  <header class="bg-black bg-opacity-80 p-4 flex flex-col md:flex-row justify-between items-center shadow-md relative shine">
+    <h1 class="text-2xl font-bold text-white relative z-10">Sham Salong</h1>
+    <div class="flex flex-col md:flex-row gap-2 md:gap-4 items-end md:items-center mt-2 md:mt-0">
+      <span id="userName" class="text-white font-medium"></span>
+      <button id="loginBtn" onclick="openModal('login')" class="px-3 py-1 bg-gold text-black font-semibold rounded shadow hover:brightness-110 transition relative shine">Logga in</button>
+      <button id="registerBtn" onclick="openModal('register')" class="px-3 py-1 bg-gold text-black font-semibold rounded shadow hover:brightness-110 transition relative shine">Registrera</button>
+      <button id="logoutBtn" onclick="logout()" class="px-3 py-1 bg-red-600 text-white font-semibold rounded shadow hover:brightness-110 transition relative shine hidden">Logga ut</button>
     </div>
   </header>
 
-  <!-- Om oss -->
-  <section class="about mx-auto max-w-3xl p-8 rounded-lg my-8 bg-purple-800 bg-opacity-80 text-center">
-    <h1 class="text-3xl font-bold mb-4">Om oss</h1>
-    <p>Sham Salong erbjuder exklusiva klippningar, skäggvård och färgning med premiumservice i hjärtat av staden.</p>
+  <!-- About Section -->
+  <section class="about bg-purple-900 bg-opacity-70 rounded-lg p-8 my-6 max-w-4xl mx-auto text-center shadow-lg">
+    <h2 class="text-3xl font-bold mb-4">Om oss</h2>
+    <p>Sham Salong erbjuder förstklassiga klippningar och skäggvård i hjärtat av staden – en upplevelse för alla som vill känna sig speciella.</p>
   </section>
 
-  <!-- Booking Forms -->
-  <section class="mx-auto max-w-3xl my-8 p-8 bg-black bg-opacity-60 rounded-lg space-y-10">
-
-    <!-- Logged-in User Booking Form -->
-    <div id="userBookingSection" class="hidden shiny p-6 rounded-lg bg-purple-900 bg-opacity-80">
-      <h2 class="text-2xl font-bold mb-4">Boka tid (för inloggade)</h2>
-      <form id="userBookingForm" class="flex flex-col gap-4">
-        <input type="text" id="userBookName" placeholder="Ditt namn" class="p-3 rounded text-black">
-        <input type="text" id="userBookPhone" placeholder="Telefonnummer" class="p-3 rounded text-black">
-        <select id="userBookService" class="p-3 rounded text-black">
-          <option value="">Välj tjänst</option>
-          <option value="fade">Fade - 250 kr</option>
-          <option value="skägg">Skägg - 150 kr</option>
-          <option value="färgning">Färgning - 600 kr</option>
-          <option value="barn">Barnklippning - 200 kr</option>
-        </select>
-        <input type="datetime-local" id="userBookTime" class="p-3 rounded text-black">
-        <button type="submit" class="bg-yellow-400 text-black font-bold p-3 rounded hover:scale-105 transition shiny">Boka tid</button>
-      </form>
-    </div>
-
-    <!-- Guest Booking Form -->
-    <div id="guestBookingSection" class="shiny p-6 rounded-lg bg-purple-900 bg-opacity-80">
-      <h2 class="text-2xl font-bold mb-4">Boka som gäst</h2>
-      <form id="guestBookingForm" class="flex flex-col gap-4">
-        <input type="text" id="guestName" placeholder="Ditt namn" class="p-3 rounded text-black">
-        <input type="text" id="guestPhone" placeholder="Telefonnummer" class="p-3 rounded text-black">
-        <select id="guestService" class="p-3 rounded text-black">
-          <option value="">Välj tjänst</option>
-          <option value="fade">Fade - 250 kr</option>
-          <option value="skägg">Skägg - 150 kr</option>
-          <option value="färgning">Färgning - 600 kr</option>
-          <option value="barn">Barnklippning - 200 kr</option>
-        </select>
-        <input type="datetime-local" id="guestTime" class="p-3 rounded text-black">
-        <button type="submit" class="bg-yellow-400 text-black font-bold p-3 rounded hover:scale-105 transition shiny">Boka som gäst</button>
-      </form>
-    </div>
-
-    <!-- Calendly Inline Widget -->
-    <div class="shiny p-6 rounded-lg bg-purple-900 bg-opacity-80">
-      <h2 class="text-2xl font-bold mb-4">Online Bokning (Calendly)</h2>
-      <div class="calendly-inline-widget" data-url="https://calendly.com/mohammadyamenmustafa37?background_color=4b0082&text_color=ffffff&primary_color=ffd700" style="min-width:320px;height:700px;"></div>
-    </div>
+  <!-- Booking for Logged-in Users -->
+  <section id="userBookingSection" class="booking bg-black bg-opacity-70 rounded-lg p-8 my-6 max-w-4xl mx-auto shadow-lg hidden">
+    <h2 class="text-2xl font-bold mb-4">Boka tid som medlem</h2>
+    <form id="userBookingForm" class="flex flex-col gap-3">
+      <input type="text" id="userNameInput" placeholder="Ditt namn" required class="p-2 rounded text-black">
+      <input type="text" id="userPhoneInput" placeholder="Telefonnummer" required class="p-2 rounded text-black">
+      <select id="userServiceInput" required class="p-2 rounded text-black">
+        <option value="">Välj tjänst</option>
+        <option value="fade">Fade - 250 kr</option>
+        <option value="skägg">Skägg - 150 kr</option>
+        <option value="färgning">Färgning - 600 kr</option>
+        <option value="barn">Barnklippning - 200 kr</option>
+      </select>
+      <input type="datetime-local" id="userTimeInput" required class="p-2 rounded text-black">
+      <button type="submit" class="bg-gold text-black font-bold rounded py-2 hover:brightness-110 transition relative shine">Boka tid</button>
+    </form>
   </section>
 
-  <!-- Min sida -->
-  <section id="dashboard" class="mx-auto max-w-3xl my-8 p-6 rounded-lg bg-yellow-100 text-black hidden">
+  <!-- Guest Booking -->
+  <section class="guest-booking bg-black bg-opacity-70 rounded-lg p-8 my-6 max-w-4xl mx-auto shadow-lg">
+    <h2 class="text-2xl font-bold mb-4">Boka som gäst</h2>
+    <form id="guestBookingForm" class="flex flex-col gap-3">
+      <input type="text" id="guestName" placeholder="Ditt namn" required class="p-2 rounded text-black">
+      <input type="text" id="guestPhone" placeholder="Telefonnummer" required class="p-2 rounded text-black">
+      <select id="guestService" required class="p-2 rounded text-black">
+        <option value="">Välj tjänst</option>
+        <option value="fade">Fade - 250 kr</option>
+        <option value="skägg">Skägg - 150 kr</option>
+        <option value="färgning">Färgning - 600 kr</option>
+        <option value="barn">Barnklippning - 200 kr</option>
+      </select>
+      <input type="datetime-local" id="guestTime" required class="p-2 rounded text-black">
+      <button type="submit" class="bg-gold text-black font-bold rounded py-2 hover:brightness-110 transition relative shine">Boka som gäst</button>
+    </form>
+  </section>
+
+  <!-- Calendly Inline Widget -->
+  <section class="booking bg-purple-900 bg-opacity-70 rounded-lg p-8 my-6 max-w-4xl mx-auto shadow-lg">
+    <h2 class="text-2xl font-bold mb-4">Boka via Calendly</h2>
+    <div class="calendly-inline-widget" data-url="https://calendly.com/mohammadyamenmustafa37?background_color=4b0082&text_color=ffffff&primary_color=ffd700" style="min-width:320px;height:700px;"></div>
+  </section>
+
+  <!-- Dashboard for Logged-in Users -->
+  <section id="dashboard" class="dashboard bg-purple-800 bg-opacity-70 rounded-lg p-8 my-6 max-w-4xl mx-auto shadow-lg hidden">
     <h2 class="text-2xl font-bold mb-4">Min sida</h2>
-    <p id="welcomeMsg" class="mb-4"></p>
-    <ul id="userBookings" class="space-y-2"></ul>
+    <ul id="userBookings" class="flex flex-col gap-2"></ul>
   </section>
 
   <!-- Contact -->
-  <section class="contact mx-auto max-w-3xl p-6 bg-purple-800 bg-opacity-80 rounded-lg my-8 text-center">
+  <section class="contact bg-black bg-opacity-80 rounded-lg p-8 my-6 max-w-4xl mx-auto shadow-lg text-center">
     <h2 class="text-2xl font-bold mb-4">Kontakta oss</h2>
     <p>📞 0793488688</p>
     <p>📧 shams.barbershop74@gmail.com</p>
@@ -121,23 +129,24 @@
   </section>
 
   <!-- Auth Modal -->
-  <div id="authModal" class="modal flex justify-center items-center hidden">
-    <div class="modal-content bg-white text-black p-6 rounded-lg relative">
-      <button class="close-btn" onclick="closeModal()">×</button>
+  <div id="authModal" class="modal flex justify-center items-center">
+    <div class="modal-content relative bg-white text-black p-6 rounded-lg shadow-lg w-80">
+      <button class="close-btn absolute top-2 right-2" onclick="closeModal()">×</button>
       <h3 id="modalTitle" class="text-xl font-bold mb-4">Logga in</h3>
-      <input type="email" id="email" placeholder="Email" class="p-2 w-full rounded mb-2">
-      <input type="password" id="password" placeholder="Lösenord" class="p-2 w-full rounded mb-2">
-      <button id="authSubmit" class="bg-yellow-400 text-black font-bold w-full p-2 rounded mt-2">Skicka</button>
+      <input type="email" id="email" placeholder="Email" class="p-2 rounded mb-3 w-full">
+      <input type="password" id="password" placeholder="Lösenord" class="p-2 rounded mb-3 w-full">
+      <button id="authSubmit" class="bg-gold text-black font-bold rounded py-2 w-full hover:brightness-110 transition relative shine">Skicka</button>
     </div>
   </div>
 
-  <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg text-white hidden"></div>
+  <!-- Toast Notifications -->
+  <div id="toast" class="fixed left-1/2 bottom-6 transform -translate-x-1/2 text-white bg-black bg-opacity-80 px-4 py-2 rounded shadow-lg transition-all"></div>
 
-  <!-- Firebase & Scripts -->
+  <!-- Firebase & JS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, setDoc, serverTimestamp, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
@@ -152,43 +161,38 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    let currentMode = "login", unsubscribeBookings = null;
+    let currentMode = "login";
+    let unsubscribeBookings = null;
 
-    function showToast(msg, color="black") {
-      const t = document.getElementById("toast");
-      t.textContent = msg; t.style.background = color;
-      t.classList.remove("hidden"); t.classList.add("block");
-      setTimeout(()=>{ t.classList.remove("block"); t.classList.add("hidden"); }, 3000);
+    function showToast(msg,color="#000"){
+      const t=document.getElementById("toast");
+      t.textContent=msg; t.style.background=color;
+      t.classList.add("show");
+      setTimeout(()=>t.classList.remove("show"),3000);
     }
 
-    window.openModal = (mode) => { 
-      currentMode = mode; 
-      document.getElementById("modalTitle").innerText = mode==="login"?"Logga in":"Registrera"; 
-      document.getElementById("authModal").classList.remove("hidden"); 
+    window.openModal = (mode) => {
+      currentMode = mode;
+      document.getElementById("modalTitle").innerText = mode === "login" ? "Logga in" : "Registrera";
+      document.getElementById("authModal").style.display = "flex";
     }
-    window.closeModal = () => document.getElementById("authModal").classList.add("hidden");
+    window.closeModal = () => document.getElementById("authModal").style.display = "none";
 
-    async function createUserDoc(user){
-      await setDoc(doc(db,"users",user.uid), {email:user.email, lastLogin:serverTimestamp()}, {merge:true});
-    }
-
-    document.getElementById("authSubmit").addEventListener("click", async ()=>{
+    document.getElementById("authSubmit").addEventListener("click", async () => {
       const email = document.getElementById("email").value;
       const pass = document.getElementById("password").value;
       try {
         let userCredential;
         if(currentMode==="login") userCredential = await signInWithEmailAndPassword(auth,email,pass);
         else userCredential = await createUserWithEmailAndPassword(auth,email,pass);
-        await createUserDoc(userCredential.user);
         showToast(currentMode==="login"?"Inloggad!":"Registrerad!","green");
         closeModal();
-        loadDashboard(userCredential.user);
-      } catch(err){ showToast(err.message,"red"); }
+      } catch(err) { showToast(err.message,"red"); }
     });
 
-    function logout(){
+    function logout() {
       if(unsubscribeBookings) unsubscribeBookings();
-      unsubscribeBookings=null;
+      unsubscribeBookings = null;
       signOut(auth).then(()=>{
         document.getElementById("dashboard").classList.add("hidden");
         document.getElementById("userBookingSection").classList.add("hidden");
@@ -200,28 +204,30 @@
       });
     }
 
-    function loadDashboard(user){
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("userBookingSection").classList.remove("hidden");
-      document.getElementById("loginBtn").classList.add("hidden");
-      document.getElementById("registerBtn").classList.add("hidden");
-      document.getElementById("logoutBtn").classList.remove("hidden");
-      document.getElementById("userName").textContent = `Välkommen, ${user.email}`;
+    onAuthStateChanged(auth, user => {
+      if(user){
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("userBookingSection").classList.remove("hidden");
+        document.getElementById("loginBtn").classList.add("hidden");
+        document.getElementById("registerBtn").classList.add("hidden");
+        document.getElementById("logoutBtn").classList.remove("hidden");
+        document.getElementById("userName").textContent = user.email;
 
-      const bookingsRef = collection(db,"users",user.uid,"bookings");
-      unsubscribeBookings = onSnapshot(bookingsRef, snapshot=>{
-        const list = document.getElementById("userBookings");
-        list.innerHTML="";
-        snapshot.forEach(docSnap=>{
-          const booking = docSnap.data();
-          const li = document.createElement("li");
-          li.textContent = `${booking.service} - ${booking.time}`;
-          list.appendChild(li);
+        const bookingsRef = collection(db,"users",user.uid,"bookings");
+        unsubscribeBookings = onSnapshot(bookingsRef, snapshot=>{
+          const userBookings = document.getElementById("userBookings");
+          userBookings.innerHTML="";
+          snapshot.forEach(docSnap=>{
+            const booking = docSnap.data();
+            const li = document.createElement("li");
+            li.textContent = `${booking.service} - ${booking.time}`;
+            userBookings.appendChild(li);
+          });
         });
-      });
-    }
+      }
+    });
 
-    // Guest booking form
+    // Guest Booking
     document.getElementById("guestBookingForm").addEventListener("submit", async e=>{
       e.preventDefault();
       const name = e.target.guestName.value;
@@ -232,10 +238,36 @@
         await addDoc(collection(db,"guestBookings"),{name,phone,service,time,createdAt:serverTimestamp()});
         showToast("Bokning skapad!","green");
         e.target.reset();
-      }catch(err){ showToast(err.message,"red"); }
+      }catch(err){showToast(err.message,"red");}
     });
+
+    // User Booking
+    document.getElementById("userBookingForm")?.addEventListener("submit", async e=>{
+      e.preventDefault();
+      const user = auth.currentUser;
+      if(!user){ showToast("Logga in först!","red"); return; }
+      const name = e.target.userNameInput.value;
+      const phone = e.target.userPhoneInput.value;
+      const service = e.target.userServiceInput.value;
+      const time = e.target.userTimeInput.value;
+      try{
+        await addDoc(collection(db,"users",user.uid,"bookings"),{name,phone,service,time,createdAt:serverTimestamp()});
+        showToast("Bokning skapad!","green");
+        e.target.reset();
+      }catch(err){showToast(err.message,"red");}
+    });
+
+    // Loading bar animation
+    window.addEventListener("load",()=>{
+      const bar = document.getElementById("loadingBar");
+      bar.style.width="100%";
+      setTimeout(()=>{ bar.style.display="none"; },600);
+    });
+
   </script>
 
+  <!-- Calendly Widget -->
   <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
 </body>
 </html>
