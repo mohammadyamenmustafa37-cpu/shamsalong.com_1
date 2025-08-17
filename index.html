@@ -19,11 +19,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     header h1 { margin: 0; font-size: 24px; }
 
-    header .auth-buttons { display: flex; gap: 10px; }
+    header .auth-buttons { display: flex; gap: 10px; align-items: center; }
 
     header button {
       padding: 8px 12px;
@@ -36,25 +37,18 @@
     }
 
     section { padding: 40px 20px; text-align: center; }
-    h2 { margin-bottom: 20px; }
+    h1, h2 { margin-bottom: 20px; }
 
-    /* Om oss */
-    .about {
-      background: rgba(75,0,130,0.9);
+    .about, .booking, .dashboard {
       border-radius: 10px;
       padding: 30px;
+      margin: 20px auto;
       max-width: 800px;
-      margin: auto;
     }
 
-    /* Bokning */
-    .booking {
-      background: rgba(0,0,0,0.7);
-      border-radius: 10px;
-      padding: 30px;
-      max-width: 600px;
-      margin: auto;
-    }
+    .about { background: rgba(75,0,130,0.9); }
+    .booking { background: rgba(0,0,0,0.7); }
+    .dashboard { background: rgba(0,0,0,0.6); }
 
     input, select {
       display: block;
@@ -77,7 +71,6 @@
       margin-top: 10px;
     }
 
-    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -93,11 +86,13 @@
       color: #000;
       padding: 20px;
       border-radius: 10px;
-      width: 300px;
+      width: 90%;
+      max-width: 400px;
       text-align: center;
       position: relative;
     }
-    .modal-content input { width: 90%; }
+    .modal-content input, .modal-content select { width: 90%; margin: 10px 0; }
+
     .close-btn {
       position: absolute;
       right: 10px; top: 10px;
@@ -107,12 +102,9 @@
       cursor: pointer;
     }
 
-    /* Toast */
     .toast {
       visibility: hidden;
       min-width: 200px;
-      background-color: #333;
-      color: #fff;
       text-align: center;
       border-radius: 4px;
       padding: 12px;
@@ -122,23 +114,14 @@
       bottom: 30px;
       font-size: 16px;
       transform: translateX(-50%);
+      color: #fff;
     }
     .toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
     @keyframes fadein { from {opacity:0;} to {opacity:1;} }
     @keyframes fadeout { from {opacity:1;} to {opacity:0;} }
 
-    /* Kontakt */
     .contact { background: rgba(0,0,0,0.8); padding: 20px; text-align: center; }
 
-    /* Min sida */
-    .dashboard {
-      display: none;
-      background: rgba(0,0,0,0.7);
-      padding: 30px;
-      margin: 20px auto;
-      border-radius: 10px;
-      max-width: 700px;
-    }
     .dashboard ul { list-style: none; padding: 0; }
     .dashboard li {
       background: #fffbea;
@@ -148,23 +131,30 @@
       border-radius: 5px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
     }
+    .dashboard li button { margin-left: 5px; cursor: pointer; }
   </style>
 </head>
 <body>
   <header>
     <h1>Sham Salong</h1>
     <div class="auth-buttons">
-      <button onclick="openModal('login')">Logga in</button>
-      <button onclick="openModal('register')">Registrera</button>
+      <span id="userName" style="margin-right:10px;"></span>
+      <button id="loginBtn" onclick="openModal('login')">Logga in</button>
+      <button id="registerBtn" onclick="openModal('register')">Registrera</button>
+      <button id="logoutBtn" onclick="logout()" style="display:none;">Logga ut</button>
     </div>
   </header>
 
+  <!-- Om oss sektion -->
   <section class="about">
-    <h2>Om oss</h2>
+    <h1>Om oss</h1>
     <p>Välkommen till Sham Salong – din lokala barbershop i hjärtat av staden.</p>
   </section>
 
+  <!-- Bokningsformulär -->
   <section class="booking">
     <h2>Boka en tid</h2>
     <form id="bookingForm">
@@ -180,11 +170,12 @@
       <input type="datetime-local" id="time" required>
       <button type="submit" class="submit-btn">Boka</button>
     </form>
-  </section>
 
-  <section class="dashboard" id="dashboard">
-    <h2>Min sida</h2>
-    <ul id="myBookings"></ul>
+    <!-- Dashboard visas direkt här -->
+    <section class="dashboard" id="dashboard">
+      <h2>Min sida</h2>
+      <ul id="myBookings"></ul>
+    </section>
   </section>
 
   <section class="contact">
@@ -194,7 +185,7 @@
     <p>📍 Esplanaden 1B</p>
   </section>
 
-  <!-- Modal -->
+  <!-- Auth Modal -->
   <div id="authModal" class="modal">
     <div class="modal-content">
       <button class="close-btn" onclick="closeModal()">×</button>
@@ -203,19 +194,16 @@
       <input type="password" id="password" placeholder="Lösenord">
       <button id="authSubmit">Skicka</button>
       <hr>
-      <button id="googleBtn">Google</button>
+      <button id="googleBtn">Logga in med Google</button>
     </div>
   </div>
 
-  <!-- Toast -->
   <div id="toast"></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } 
-      from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc } 
-      from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc, setDoc, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
@@ -232,86 +220,102 @@
 
     let currentMode = "login";
 
-    // Toast
-    function showToast(msg, color="black") {
+    function showToast(msg,color="black"){
       const toast = document.getElementById("toast");
       toast.innerText = msg;
       toast.style.background = color;
       toast.className = "toast show";
-      setTimeout(()=> toast.className=toast.className.replace("show",""), 3000);
+      setTimeout(()=> toast.className = toast.className.replace("show",""),3000);
     }
 
-    // Modal
-    window.openModal = (mode) => {
+    window.openModal = (mode)=>{
       currentMode = mode;
-      document.getElementById("modalTitle").innerText = mode === "login" ? "Logga in" : "Registrera";
-      document.getElementById("authModal").style.display = "flex";
-    };
-    window.closeModal = () => {
-      document.getElementById("authModal").style.display = "none";
-    };
+      document.getElementById("modalTitle").innerText = mode==="login"?"Logga in":"Registrera";
+      document.getElementById("authModal").style.display="flex";
+    }
+    window.closeModal = ()=>document.getElementById("authModal").style.display="none";
 
-    // Auth
-    document.getElementById("authSubmit").addEventListener("click", async () => {
+    async function createUserDoc(user){
+      await setDoc(doc(db,"users",user.uid),{
+        name: user.displayName || "",
+        email: user.email,
+        lastLogin: serverTimestamp()
+      },{merge:true});
+    }
+
+    document.getElementById("authSubmit").addEventListener("click", async ()=>{
       const email = document.getElementById("email").value;
       const pass = document.getElementById("password").value;
-      try {
-        if(currentMode==="login"){
-          await signInWithEmailAndPassword(auth, email, pass);
-          showToast("Inloggad!","green");
-        } else {
-          await createUserWithEmailAndPassword(auth, email, pass);
-          showToast("Registrerad!","green");
-        }
+      try{
+        let userCredential;
+        if(currentMode==="login") userCredential = await signInWithEmailAndPassword(auth,email,pass);
+        else userCredential = await createUserWithEmailAndPassword(auth,email,pass);
+        await createUserDoc(userCredential.user);
+        showToast(currentMode==="login"?"Inloggad!":"Registrerad!","green");
         closeModal();
-      } catch(err){ showToast(err.message,"red"); }
+      }catch(err){ showToast(err.message,"red"); }
     });
 
-    document.getElementById("googleBtn").addEventListener("click", async () => {
-      try {
-        await signInWithPopup(auth, new GoogleAuthProvider());
+    document.getElementById("googleBtn").addEventListener("click", async ()=>{
+      try{
+        const result = await signInWithPopup(auth,new GoogleAuthProvider());
+        await createUserDoc(result.user);
         showToast("Inloggad med Google!","green");
         closeModal();
-      } catch(err){ showToast(err.message,"red"); }
+      }catch(err){ showToast(err.message,"red"); }
     });
 
-    // Booking
-    document.getElementById("bookingForm").addEventListener("submit", async (e)=>{
+    document.getElementById("bookingForm").addEventListener("submit",async e=>{
       e.preventDefault();
+      if(!auth.currentUser){ showToast("Logga in för att boka!","red"); return; }
       const name = e.target.name.value;
       const phone = e.target.phone.value;
       const service = e.target.service.value;
       const time = e.target.time.value;
       try{
-        await addDoc(collection(db,"bookings"),{uid: auth.currentUser?.uid || null,name,phone,service,time});
+        await addDoc(collection(db,"users",auth.currentUser.uid,"bookings"),{name,phone,service,time,createdAt:serverTimestamp()});
         showToast("Bokning skapad!","green");
         e.target.reset();
+        loadBookings(auth.currentUser.uid);
       }catch(err){ showToast(err.message,"red"); }
     });
 
-    // Dashboard
     async function loadBookings(uid){
-      const q = query(collection(db,"bookings"), where("uid","==",uid));
-      const snapshot = await getDocs(q);
+      const snapshot = await getDocs(collection(db,"users",uid,"bookings"));
       const list = document.getElementById("myBookings");
       list.innerHTML="";
       snapshot.forEach(docSnap=>{
-        const li=document.createElement("li");
-        li.textContent=`${docSnap.data().service} - ${docSnap.data().time}`;
-        const delBtn=document.createElement("button");
-        delBtn.textContent="❌";
-        delBtn.onclick=async()=>{ await deleteDoc(doc(db,"bookings",docSnap.id)); loadBookings(uid); };
-        li.appendChild(delBtn);
+        const b = docSnap.data();
+        const li = document.createElement("li");
+        li.textContent = `${b.service} - ${b.time}`;
         list.appendChild(li);
       });
     }
 
-    onAuthStateChanged(auth, user=>{
+    function logout(){
+      signOut(auth).then(()=>showToast("Utloggad!","green"));
+    }
+
+    onAuthStateChanged(auth, async user=>{
+      const loginBtn = document.getElementById("loginBtn");
+      const registerBtn = document.getElementById("registerBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const userName = document.getElementById("userName");
+      const dashboard = document.getElementById("dashboard");
       if(user){
-        document.getElementById("dashboard").style.display="block";
+        dashboard.style.display="block";
+        loginBtn.style.display="none";
+        registerBtn.style.display="none";
+        logoutBtn.style.display="inline-block";
+        const userSnap = await getDoc(doc(db,"users",user.uid));
+        userName.textContent = userSnap.exists()?`Välkommen, ${userSnap.data().name}`:"";
         loadBookings(user.uid);
-      } else {
-        document.getElementById("dashboard").style.display="none";
+      }else{
+        dashboard.style.display="none";
+        loginBtn.style.display="inline-block";
+        registerBtn.style.display="inline-block";
+        logoutBtn.style.display="none";
+        userName.textContent="";
       }
     });
   </script>
