@@ -124,7 +124,6 @@
 
     .dashboard ul { list-style: none; padding: 0; }
     .dashboard li {
-      background: #fffbea;
       color: #000;
       margin: 10px;
       padding: 10px;
@@ -135,6 +134,12 @@
       flex-wrap: wrap;
     }
     .dashboard li button { margin-left: 5px; cursor: pointer; }
+
+    /* Färgkoder för bokningar */
+    .fade { background-color: #fff9b0; }
+    .skägg { background-color: #b0ffb0; }
+    .färgning { background-color: #b0dfff; }
+    .barn { background-color: #ffd0a0; }
   </style>
 </head>
 <body>
@@ -171,7 +176,7 @@
       <button type="submit" class="submit-btn">Boka</button>
     </form>
 
-    <!-- Dashboard visas direkt här -->
+    <!-- Dashboard -->
     <section class="dashboard" id="dashboard">
       <h2>Min sida</h2>
       <ul id="myBookings"></ul>
@@ -203,7 +208,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc, setDoc, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, setDoc, serverTimestamp, doc, onSnapshot, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
@@ -219,6 +224,7 @@
     const db = getFirestore(app);
 
     let currentMode = "login";
+    let unsubscribeBookings = null;
 
     function showToast(msg,color="black"){
       const toast = document.getElementById("toast");
@@ -276,24 +282,33 @@
         await addDoc(collection(db,"users",auth.currentUser.uid,"bookings"),{name,phone,service,time,createdAt:serverTimestamp()});
         showToast("Bokning skapad!","green");
         e.target.reset();
-        loadBookings(auth.currentUser.uid);
       }catch(err){ showToast(err.message,"red"); }
     });
 
-    async function loadBookings(uid){
-      const snapshot = await getDocs(collection(db,"users",uid,"bookings"));
-      const list = document.getElementById("myBookings");
-      list.innerHTML="";
-      snapshot.forEach(docSnap=>{
-        const b = docSnap.data();
-        const li = document.createElement("li");
-        li.textContent = `${b.service} - ${b.time}`;
-        list.appendChild(li);
-      });
+    function logout(){
+      if(unsubscribeBookings) unsubscribeBookings();
+      unsubscribeBookings = null;
+      signOut(auth).then(()=>showToast("Utloggad!","green"));
     }
 
-    function logout(){
-      signOut(auth).then(()=>showToast("Utloggad!","green"));
+    function subscribeBookings(uid){
+      if(unsubscribeBookings) unsubscribeBookings(); 
+      const bookingsRef = collection(db,"users",uid,"bookings");
+      unsubscribeBookings = onSnapshot(bookingsRef,snap=>{
+        const list = document.getElementById("myBookings");
+        list.innerHTML="";
+        snap.forEach(docSnap=>{
+          const b = docSnap.data();
+          const li = document.createElement("li");
+          li.textContent = `${b.service} - ${b.time}`;
+          li.className = b.service.toLowerCase();
+          const delBtn = document.createElement("button");
+          delBtn.textContent="❌";
+          delBtn.onclick = async()=> await deleteDoc(doc(db,"users",uid,"bookings",docSnap.id));
+          li.appendChild(delBtn);
+          list.appendChild(li);
+        });
+      });
     }
 
     onAuthStateChanged(auth, async user=>{
@@ -309,13 +324,15 @@
         logoutBtn.style.display="inline-block";
         const userSnap = await getDoc(doc(db,"users",user.uid));
         userName.textContent = userSnap.exists()?`Välkommen, ${userSnap.data().name}`:"";
-        loadBookings(user.uid);
+        subscribeBookings(user.uid);
       }else{
         dashboard.style.display="none";
         loginBtn.style.display="inline-block";
         registerBtn.style.display="inline-block";
         logoutBtn.style.display="none";
         userName.textContent="";
+        if(unsubscribeBookings) unsubscribeBookings();
+        unsubscribeBookings = null;
       }
     });
   </script>
