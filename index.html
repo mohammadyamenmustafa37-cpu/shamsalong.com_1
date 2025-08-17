@@ -5,140 +5,158 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sham Salong</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
   <style>
-    body { background: linear-gradient(to right, #4B0082, #FFD700); }
-    .shine {
+    body {
+      background: linear-gradient(to right, #4B0082, #FFD700);
+      font-family: Arial, sans-serif;
+    }
+
+    /* Shine effect only for booking headers */
+    .shiny-header {
       position: relative;
+      display: inline-block;
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: #FFD700;
       overflow: hidden;
     }
-    .shine::after {
+    .shiny-header::before {
       content: "";
       position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,.6), transparent);
-      animation: shine 3s infinite;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 30%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0) 70%
+      );
+      animation: shine 4s infinite linear;
     }
     @keyframes shine {
-      0% { left: -100%; }
-      100% { left: 100%; }
+      from { left: -100%; }
+      to { left: 100%; }
     }
   </style>
 </head>
-<body class="text-white font-sans">
+<body class="text-white">
 
-  <!-- Header -->
-  <header class="flex items-center p-4 bg-purple-900 shadow-md">
-    <img src="48BD6280-4E8E-4413-8D75-E65A07139B06.jpeg" alt="Sham Salong Logo" class="h-12 mr-4">
+  <!-- Navbar with logo -->
+  <header class="flex items-center p-4 bg-purple-900">
+    <img src="48BD6280-4E8E-4413-8D75-E65A07139B06.jpeg" alt="Sham Salong Logo" class="h-12 w-auto mr-4">
     <h1 class="text-2xl font-bold">Sham Salong</h1>
+    <nav class="ml-auto space-x-4">
+      <button id="loginBtn" class="bg-gold-500 px-3 py-1 rounded">Logga in</button>
+      <button id="registerBtn" class="bg-white text-purple-900 px-3 py-1 rounded">Registrera</button>
+      <button id="logoutBtn" class="hidden bg-red-600 px-3 py-1 rounded">Logga ut</button>
+    </nav>
   </header>
 
-  <!-- Guest Booking Form -->
-  <section id="guestForm" class="max-w-md mx-auto mt-10 bg-white text-black p-6 rounded-lg shadow-lg">
-    <h2 class="text-xl font-bold mb-4 shine">Boka som gäst</h2>
-    <form id="guestBookingForm">
-      <input type="text" placeholder="Namn" class="w-full p-2 mb-3 border rounded" required>
-      <input type="email" placeholder="E-post" class="w-full p-2 mb-3 border rounded" required>
-      <input type="tel" placeholder="Telefonnummer" class="w-full p-2 mb-3 border rounded" required>
-
-      <label class="block mb-2">Tjänst:</label>
-      <select id="guestService" class="w-full p-2 mb-3 border rounded" required>
-        <option value="" disabled selected>Välj tjänst</option>
-        <option value="Fade" data-price="250">Fade - 250kr</option>
-        <option value="Skägg" data-price="150">Skägg - 150kr</option>
-        <option value="Färgning" data-price="600">Färgning - 600kr</option>
-        <option value="Barnklippning" data-price="200">Barnklippning - 200kr</option>
-        <option value="Other" data-price="0">Annat</option>
-      </select>
-      <input type="text" id="guestOtherService" placeholder="Beskriv tjänsten" class="hidden w-full p-2 mb-3 border rounded">
-
-      <label class="block mb-2">Tid:</label>
-      <input type="datetime-local" class="w-full p-2 mb-3 border rounded" required>
-
-      <button type="button" id="guestCheckout" class="w-full bg-purple-700 hover:bg-purple-800 text-white p-3 rounded">
-        Gå till betalning
-      </button>
-    </form>
+  <!-- Guest Booking Form (default) -->
+  <section id="guestBooking" class="p-6 text-center">
+    <h2 class="shiny-header mb-4">Boka som gäst</h2>
+    <div class="max-w-lg mx-auto bg-purple-800 p-6 rounded shadow-lg">
+      <div class="mb-4">
+        <label class="block mb-2">Välj tjänst</label>
+        <select class="w-full p-2 rounded text-black">
+          <option>Klippning</option>
+          <option>Fade</option>
+          <option>Skäggtrimning</option>
+          <option>Färgning</option>
+          <option>Ögonbryn</option>
+          <option>Vaxning</option>
+          <option>Annat (ange nedan)</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block mb-2">Annan tjänst</label>
+        <input type="text" placeholder="Skriv egen tjänst" class="w-full p-2 rounded text-black">
+      </div>
+      <div id="calendly-guest" class="h-[600px]"></div>
+    </div>
   </section>
 
-  <!-- Logged-in Booking Form -->
-  <section id="loggedForm" class="max-w-md mx-auto mt-10 bg-white text-black p-6 rounded-lg shadow-lg hidden">
-    <h2 class="text-xl font-bold mb-4 shine">Boka som inloggad</h2>
-    <form id="loggedBookingForm">
-      <label class="block mb-2">Tjänst:</label>
-      <select id="loggedService" class="w-full p-2 mb-3 border rounded" required>
-        <option value="" disabled selected>Välj tjänst</option>
-        <option value="Fade" data-price="250">Fade - 250kr</option>
-        <option value="Skägg" data-price="150">Skägg - 150kr</option>
-        <option value="Färgning" data-price="600">Färgning - 600kr</option>
-        <option value="Barnklippning" data-price="200">Barnklippning - 200kr</option>
-        <option value="Other" data-price="0">Annat</option>
-      </select>
-      <input type="text" id="loggedOtherService" placeholder="Beskriv tjänsten" class="hidden w-full p-2 mb-3 border rounded">
-
-      <label class="block mb-2">Tid:</label>
-      <input type="datetime-local" class="w-full p-2 mb-3 border rounded" required>
-
-      <button type="button" id="loggedCheckout" class="w-full bg-purple-700 hover:bg-purple-800 text-white p-3 rounded">
-        Gå till betalning
-      </button>
-    </form>
+  <!-- Logged in booking form -->
+  <section id="userBooking" class="hidden p-6 text-center">
+    <h2 class="shiny-header mb-4">Bokningar (inloggad användare)</h2>
+    <div class="max-w-lg mx-auto bg-purple-800 p-6 rounded shadow-lg">
+      <div class="mb-4">
+        <label class="block mb-2">Välj tjänst</label>
+        <select class="w-full p-2 rounded text-black">
+          <option>Klippning</option>
+          <option>Fade</option>
+          <option>Skäggtrimning</option>
+          <option>Färgning</option>
+          <option>Ögonbryn</option>
+          <option>Vaxning</option>
+          <option>Annat (ange nedan)</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label class="block mb-2">Annan tjänst</label>
+        <input type="text" placeholder="Skriv egen tjänst" class="w-full p-2 rounded text-black">
+      </div>
+      <div id="calendly-user" class="h-[600px]"></div>
+    </div>
   </section>
 
-  <!-- Checkout Section -->
-  <section id="checkoutSection" class="max-w-md mx-auto mt-10 bg-white text-black p-6 rounded-lg shadow-lg hidden">
-    <h2 class="text-xl font-bold mb-4">Kassa</h2>
-    <p><strong>Tjänst:</strong> <span id="checkoutService"></span></p>
-    <p><strong>Pris:</strong> <span id="checkoutPrice"></span> kr</p>
-    <a id="swishButton" href="#" 
-       class="block w-full text-center bg-green-600 hover:bg-green-700 text-white p-3 rounded mt-4">
-       Betala med Swish
-    </a>
+  <!-- Om oss -->
+  <section class="p-6 text-center">
+    <h2 class="text-xl font-bold mb-2">Om oss</h2>
+    <p class="max-w-xl mx-auto">
+      Vi erbjuder professionella klippningar, fade, skäggtrimning och färgning i en elegant miljö.
+    </p>
   </section>
 
+  <!-- Calendly Embed -->
+  <script src="https://assets.calendly.com/assets/external/widget.js"></script>
   <script>
-    // Show Other service input dynamically
-    function toggleOtherService(selectId, inputId) {
-      const serviceSelect = document.getElementById(selectId);
-      const otherInput = document.getElementById(inputId);
-      serviceSelect.addEventListener("change", () => {
-        if (serviceSelect.value === "Other") {
-          otherInput.classList.remove("hidden");
-          otherInput.required = true;
-        } else {
-          otherInput.classList.add("hidden");
-          otherInput.required = false;
-        }
-      });
-    }
-    toggleOtherService("guestService", "guestOtherService");
-    toggleOtherService("loggedService", "loggedOtherService");
+    // Embed guest booking form
+    Calendly.initInlineWidget({
+      url: 'https://calendly.com/YOUR_CALENDLY_USERNAME/guest',
+      parentElement: document.getElementById('calendly-guest'),
+      prefill: {},
+      utm: {}
+    });
 
-    // Handle checkout process
-    function setupCheckout(buttonId, serviceId, otherId) {
-      document.getElementById(buttonId).addEventListener("click", () => {
-        const serviceSelect = document.getElementById(serviceId);
-        const otherInput = document.getElementById(otherId);
-        const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
-        let service = serviceSelect.value;
-        let price = selectedOption.dataset.price;
+    // Embed user booking form
+    Calendly.initInlineWidget({
+      url: 'https://calendly.com/YOUR_CALENDLY_USERNAME/loggedin',
+      parentElement: document.getElementById('calendly-user'),
+      prefill: {},
+      utm: {}
+    });
 
-        if (service === "Other" && otherInput.value.trim() !== "") {
-          service = otherInput.value;
-        }
+    // Fake login handling
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const guestBooking = document.getElementById('guestBooking');
+    const userBooking = document.getElementById('userBooking');
 
-        document.getElementById("checkoutService").textContent = service;
-        document.getElementById("checkoutPrice").textContent = price;
+    loginBtn.onclick = () => {
+      guestBooking.classList.add('hidden');
+      userBooking.classList.remove('hidden');
+      loginBtn.classList.add('hidden');
+      registerBtn.classList.add('hidden');
+      logoutBtn.classList.remove('hidden');
+    };
 
-        const swishLink = `swish://payment?payee=1230711572&amount=${price}&message=${encodeURIComponent(service)}`;
-        document.getElementById("swishButton").setAttribute("href", swishLink);
+    registerBtn.onclick = () => {
+      alert("Registrering fungerar här (Firebase Auth kan läggas till).");
+    };
 
-        document.getElementById("checkoutSection").classList.remove("hidden");
-        document.getElementById("checkoutSection").scrollIntoView({ behavior: "smooth" });
-      });
-    }
-    setupCheckout("guestCheckout", "guestService", "guestOtherService");
-    setupCheckout("loggedCheckout", "loggedService", "loggedOtherService");
+    logoutBtn.onclick = () => {
+      guestBooking.classList.remove('hidden');
+      userBooking.classList.add('hidden');
+      loginBtn.classList.remove('hidden');
+      registerBtn.classList.remove('hidden');
+      logoutBtn.classList.add('hidden');
+    };
   </script>
 </body>
 </html>
