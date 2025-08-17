@@ -5,141 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sham Salong</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #4B0082, #FFD700);
-      margin: 0;
-      padding: 0;
-      color: #fff;
-    }
-
-    header {
-      background: rgba(0,0,0,0.8);
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    header h1 { margin: 0; font-size: 24px; }
-
-    header .auth-buttons { display: flex; gap: 10px; align-items: center; }
-
-    header button {
-      padding: 8px 12px;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-      background: #FFD700;
-      color: #000;
-      font-weight: bold;
-    }
-
-    section { padding: 40px 20px; text-align: center; }
-    h1, h2 { margin-bottom: 20px; }
-
-    .about, .booking, .dashboard {
-      border-radius: 10px;
-      padding: 30px;
-      margin: 20px auto;
-      max-width: 800px;
-    }
-
+    body { font-family: Arial, sans-serif; background: linear-gradient(to right,#4B0082,#FFD700); margin:0; padding:0; color:#fff; }
+    header { background: rgba(0,0,0,0.8); padding:15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+    header h1 { margin:0; font-size:24px; }
+    header .auth-buttons { display:flex; gap:10px; align-items:center; }
+    header button { padding:8px 12px; border:none; cursor:pointer; border-radius:5px; background:#FFD700; color:#000; font-weight:bold; }
+    section { padding:40px 20px; text-align:center; }
+    h1,h2 { margin-bottom:20px; }
+    .about,.booking,.dashboard { border-radius:10px; padding:30px; margin:20px auto; max-width:800px; }
     .about { background: rgba(75,0,130,0.9); }
     .booking { background: rgba(0,0,0,0.7); }
     .dashboard { background: rgba(0,0,0,0.6); }
-
-    input, select {
-      display: block;
-      margin: 10px auto;
-      padding: 10px;
-      width: 80%;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      background: #fffbea;
-    }
-
-    button.submit-btn {
-      background: #FFD700;
-      color: #000;
-      font-weight: bold;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: #fff;
-      color: #000;
-      padding: 20px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-      position: relative;
-    }
-    .modal-content input, .modal-content select { width: 90%; margin: 10px 0; }
-
-    .close-btn {
-      position: absolute;
-      right: 10px; top: 10px;
-      background: red; color: #fff;
-      border: none; border-radius: 50%;
-      width: 25px; height: 25px;
-      cursor: pointer;
-    }
-
-    .toast {
-      visibility: hidden;
-      min-width: 200px;
-      text-align: center;
-      border-radius: 4px;
-      padding: 12px;
-      position: fixed;
-      z-index: 3000;
-      left: 50%;
-      bottom: 30px;
-      font-size: 16px;
-      transform: translateX(-50%);
-      color: #fff;
-    }
-    .toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+    input,select { display:block; margin:10px auto; padding:10px; width:80%; border-radius:5px; border:1px solid #ccc; background:#fffbea; }
+    button.submit-btn { background:#FFD700; color:#000; font-weight:bold; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; margin-top:10px; }
+    .modal { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; }
+    .modal-content { background:#fff; color:#000; padding:20px; border-radius:10px; width:90%; max-width:400px; text-align:center; position:relative; }
+    .modal-content input,.modal-content select { width:90%; margin:10px 0; }
+    .close-btn { position:absolute; right:10px; top:10px; background:red; color:#fff; border:none; border-radius:50%; width:25px; height:25px; cursor:pointer; }
+    .toast { visibility:hidden; min-width:200px; text-align:center; border-radius:4px; padding:12px; position:fixed; z-index:3000; left:50%; bottom:30px; font-size:16px; transform:translateX(-50%); color:#fff; }
+    .toast.show { visibility:visible; animation:fadein 0.5s, fadeout 0.5s 2.5s; }
     @keyframes fadein { from {opacity:0;} to {opacity:1;} }
     @keyframes fadeout { from {opacity:1;} to {opacity:0;} }
-
-    .contact { background: rgba(0,0,0,0.8); padding: 20px; text-align: center; }
-
-    .dashboard ul { list-style: none; padding: 0; }
-    .dashboard li {
-      color: #000;
-      margin: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .dashboard li button { margin-left: 5px; cursor: pointer; }
-
-    /* Färgkoder för bokningar */
-    .fade { background-color: #fff9b0; }
-    .skägg { background-color: #b0ffb0; }
-    .färgning { background-color: #b0dfff; }
-    .barn { background-color: #ffd0a0; }
+    .contact { background: rgba(0,0,0,0.8); padding:20px; text-align:center; }
+    .dashboard ul { list-style:none; padding:0; }
+    .dashboard li { color:#000; margin:10px; padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+    .dashboard li button { margin-left:5px; cursor:pointer; }
+    .fade{background-color:#fff9b0;} .skägg{background-color:#b0ffb0;} .färgning{background-color:#b0dfff;} .barn{background-color:#ffd0a0;}
   </style>
 </head>
 <body>
@@ -153,13 +44,11 @@
     </div>
   </header>
 
-  <!-- Om oss sektion -->
   <section class="about">
     <h1>Om oss</h1>
     <p>Välkommen till Sham Salong – din lokala barbershop i hjärtat av staden.</p>
   </section>
 
-  <!-- Bokningsformulär -->
   <section class="booking">
     <h2>Boka en tid</h2>
     <form id="bookingForm">
@@ -176,7 +65,6 @@
       <button type="submit" class="submit-btn">Boka</button>
     </form>
 
-    <!-- Dashboard -->
     <section class="dashboard" id="dashboard">
       <h2>Min sida</h2>
       <ul id="myBookings"></ul>
@@ -190,7 +78,6 @@
     <p>📍 Esplanaden 1B</p>
   </section>
 
-  <!-- Auth Modal -->
   <div id="authModal" class="modal">
     <div class="modal-content">
       <button class="close-btn" onclick="closeModal()">×</button>
@@ -222,36 +109,19 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    let currentMode="login", unsubscribeBookings=null;
 
-    let currentMode = "login";
-    let unsubscribeBookings = null;
-
-    function showToast(msg,color="black"){
-      const toast = document.getElementById("toast");
-      toast.innerText = msg;
-      toast.style.background = color;
-      toast.className = "toast show";
-      setTimeout(()=> toast.className = toast.className.replace("show",""),3000);
-    }
-
-    window.openModal = (mode)=>{
-      currentMode = mode;
-      document.getElementById("modalTitle").innerText = mode==="login"?"Logga in":"Registrera";
-      document.getElementById("authModal").style.display="flex";
-    }
-    window.closeModal = ()=>document.getElementById("authModal").style.display="none";
+    function showToast(msg,color="black"){const t=document.getElementById("toast"); t.innerText=msg; t.style.background=color; t.className="toast show"; setTimeout(()=>t.className=t.className.replace("show",""),3000);}
+    window.openModal=(mode)=>{currentMode=mode; document.getElementById("modalTitle").innerText=mode==="login"?"Logga in":"Registrera"; document.getElementById("authModal").style.display="flex";}
+    window.closeModal=()=>document.getElementById("authModal").style.display="none";
 
     async function createUserDoc(user){
-      await setDoc(doc(db,"users",user.uid),{
-        name: user.displayName || "",
-        email: user.email,
-        lastLogin: serverTimestamp()
-      },{merge:true});
+      await setDoc(doc(db,"users",user.uid),{name:user.displayName||"",email:user.email,lastLogin:serverTimestamp()},{merge:true});
     }
 
-    document.getElementById("authSubmit").addEventListener("click", async ()=>{
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
+    document.getElementById("authSubmit").addEventListener("click",async()=>{
+      const email=document.getElementById("email").value;
+      const pass=document.getElementById("password").value;
       try{
         let userCredential;
         if(currentMode==="login") userCredential = await signInWithEmailAndPassword(auth,email,pass);
@@ -259,52 +129,49 @@
         await createUserDoc(userCredential.user);
         showToast(currentMode==="login"?"Inloggad!":"Registrerad!","green");
         closeModal();
-      }catch(err){ showToast(err.message,"red"); }
+      }catch(err){showToast(err.message,"red");}
     });
 
-    document.getElementById("googleBtn").addEventListener("click", async ()=>{
+    document.getElementById("googleBtn").addEventListener("click",async()=>{
       try{
         const result = await signInWithPopup(auth,new GoogleAuthProvider());
         await createUserDoc(result.user);
         showToast("Inloggad med Google!","green");
         closeModal();
-      }catch(err){ showToast(err.message,"red"); }
+      }catch(err){showToast(err.message,"red");}
     });
 
     document.getElementById("bookingForm").addEventListener("submit",async e=>{
       e.preventDefault();
       if(!auth.currentUser){ showToast("Logga in för att boka!","red"); return; }
-      const name = e.target.name.value;
-      const phone = e.target.phone.value;
-      const service = e.target.service.value;
-      const time = e.target.time.value;
+      const name=e.target.name.value, phone=e.target.phone.value, service=e.target.service.value, time=e.target.time.value;
       try{
         await addDoc(collection(db,"users",auth.currentUser.uid,"bookings"),{name,phone,service,time,createdAt:serverTimestamp()});
         showToast("Bokning skapad!","green");
         e.target.reset();
-      }catch(err){ showToast(err.message,"red"); }
+      }catch(err){showToast(err.message,"red");}
     });
 
     function logout(){
       if(unsubscribeBookings) unsubscribeBookings();
-      unsubscribeBookings = null;
+      unsubscribeBookings=null;
       signOut(auth).then(()=>showToast("Utloggad!","green"));
     }
 
     function subscribeBookings(uid){
-      if(unsubscribeBookings) unsubscribeBookings(); 
-      const bookingsRef = collection(db,"users",uid,"bookings");
-      unsubscribeBookings = onSnapshot(bookingsRef,snap=>{
-        const list = document.getElementById("myBookings");
+      if(unsubscribeBookings) unsubscribeBookings();
+      const ref=collection(db,"users",uid,"bookings");
+      unsubscribeBookings=onSnapshot(ref,snap=>{
+        const list=document.getElementById("myBookings");
         list.innerHTML="";
         snap.forEach(docSnap=>{
-          const b = docSnap.data();
-          const li = document.createElement("li");
-          li.textContent = `${b.service} - ${b.time}`;
-          li.className = b.service.toLowerCase();
-          const delBtn = document.createElement("button");
+          const b=docSnap.data();
+          const li=document.createElement("li");
+          li.textContent=`${b.service} - ${b.time}`;
+          li.className=b.service.toLowerCase();
+          const delBtn=document.createElement("button");
           delBtn.textContent="❌";
-          delBtn.onclick = async()=> await deleteDoc(doc(db,"users",uid,"bookings",docSnap.id));
+          delBtn.onclick=async()=>await deleteDoc(doc(db,"users",uid,"bookings",docSnap.id));
           li.appendChild(delBtn);
           list.appendChild(li);
         });
@@ -312,18 +179,19 @@
     }
 
     onAuthStateChanged(auth, async user=>{
-      const loginBtn = document.getElementById("loginBtn");
-      const registerBtn = document.getElementById("registerBtn");
-      const logoutBtn = document.getElementById("logoutBtn");
-      const userName = document.getElementById("userName");
-      const dashboard = document.getElementById("dashboard");
-      if(user){
+      const loginBtn=document.getElementById("loginBtn");
+      const registerBtn=document.getElementById("registerBtn");
+      const logoutBtn=document.getElementById("logoutBtn");
+      const userName=document.getElementById("userName");
+      const dashboard=document.getElementById("dashboard");
+
+      if(user && user.emailVerified!==false){ // Endast autentiserade användare
         dashboard.style.display="block";
         loginBtn.style.display="none";
         registerBtn.style.display="none";
         logoutBtn.style.display="inline-block";
-        const userSnap = await getDoc(doc(db,"users",user.uid));
-        userName.textContent = userSnap.exists()?`Välkommen, ${userSnap.data().name}`:"";
+        const userSnap=await getDoc(doc(db,"users",user.uid));
+        userName.textContent=userSnap.exists()?`Välkommen, ${userSnap.data().name}`:"";
         subscribeBookings(user.uid);
       }else{
         dashboard.style.display="none";
@@ -332,7 +200,7 @@
         logoutBtn.style.display="none";
         userName.textContent="";
         if(unsubscribeBookings) unsubscribeBookings();
-        unsubscribeBookings = null;
+        unsubscribeBookings=null;
       }
     });
   </script>
