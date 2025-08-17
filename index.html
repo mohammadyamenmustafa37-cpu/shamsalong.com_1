@@ -33,12 +33,33 @@
       background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
       transform: skewX(-25deg);
     }
-    .shine:hover::before {
+    .shine.hovered::before {
       animation: shineMove 1.2s ease forwards;
     }
     @keyframes shineMove {
       100% { left: 200%; }
     }
+
+    /* Logo */
+    .logo { height:50px; margin-right:10px; }
+
+    /* Cart Button */
+    #cart-btn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      background-color: #ff9900;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      z-index: 999;
+    }
+
+    /* Swish Button */
+    #swish-btn { margin-top:10px; background:#4B0082; color:#FFD700; padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer; }
   </style>
 </head>
 <body class="bg-gradient-to-r from-purple-900 via-purple-800 to-yellow-400 text-white min-h-screen flex flex-col">
@@ -48,7 +69,10 @@
 
   <!-- Header -->
   <header class="bg-black bg-opacity-70 flex flex-col md:flex-row justify-between items-center p-4">
-    <h1 class="text-2xl font-bold mb-2 md:mb-0">Sham Salong</h1>
+    <div class="flex items-center">
+      <img src="file-JhgQvLXKtcCm9rYq7SiQaR" class="logo" alt="Sham Salong Logo">
+      <h1 class="text-2xl font-bold mb-2 md:mb-0">Sham Salong</h1>
+    </div>
     <div class="flex flex-row items-center gap-2">
       <span id="userName" class="font-semibold"></span>
       <button id="loginBtn" class="bg-yellow-400 text-black px-4 py-2 rounded font-bold" onclick="openModal('login')">Logga in</button>
@@ -57,11 +81,17 @@
     </div>
   </header>
 
+  <!-- Cart Button -->
+  <button id="cart-btn">🛒</button>
+
   <!-- About Section -->
   <section class="bg-purple-900 bg-opacity-80 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
     <h2 class="text-3xl mb-4">Om oss</h2>
     <p>Sham Salong erbjuder kvalitativa klippningar, skäggvård och färgning i hjärtat av staden – din lokala premium barbershop.</p>
   </section>
+
+  <!-- Checklist Counter -->
+  <div id="checklist-counter" class="mx-auto text-center text-yellow-400 text-lg font-bold">0 Services Selected</div>
 
   <!-- Guest Booking Form -->
   <section id="guestBookingSection" class="shine bg-black bg-opacity-70 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
@@ -85,7 +115,8 @@
   <section id="userBookingSection" class="shine hidden bg-black bg-opacity-70 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
     <h2 class="text-2xl mb-4">Min bokning</h2>
     <div id="userBookings" class="flex flex-col gap-4"></div>
-    <p class="mt-4 text-yellow-400">Klicka på en bokning för att redigera tid eller tjänst.</p>
+    <button id="add-service-btn" class="mt-4 bg-yellow-400 text-black px-4 py-2 rounded font-bold">+ Lägg till tjänst</button>
+    <button id="swish-btn">Betala med Swish</button>
   </section>
 
   <!-- Inline Calendly -->
@@ -121,26 +152,18 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCc2a7sx7nq-mH2R6IkWend_HUb06wgZ2A",
-      authDomain: "shamsalong-6c54c.firebaseapp.com",
-      projectId: "shamsalong-6c54c",
-      storageBucket: "shamsalong-6c54c.appspot.com",
-      messagingSenderId: "1023072544720",
-      appId: "1:1023072544720:web:968e31cc9350bc95803bd5"
-    };
-
+    const firebaseConfig = { /* ... same as before ... */ };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-
-    let currentMode = "login";
 
     const guestSection = document.getElementById("guestBookingSection");
     const userSection = document.getElementById("userBookingSection");
     const userBookings = document.getElementById("userBookings");
+    const checklistCounter = document.getElementById("checklist-counter");
+    let servicesCount = 0;
 
-    const toast = document.getElementById("toast");
-    function showToast(msg, color="black"){
+    function showToast(msg,color="black"){
+      const toast = document.getElementById("toast");
       toast.textContent = msg;
       toast.style.backgroundColor = color;
       toast.classList.remove("hidden");
@@ -148,83 +171,90 @@
     }
 
     // Modal
-    window.openModal = (mode)=>{
-      currentMode = mode;
-      document.getElementById("modalTitle").textContent = mode === "login" ? "Logga in" : "Registrera";
+    window.openModal=(mode)=>{
+      document.getElementById("modalTitle").textContent = mode==="login"?"Logga in":"Registrera";
       document.getElementById("authModal").classList.remove("hidden");
     }
-    window.closeModal = ()=>document.getElementById("authModal").classList.add("hidden");
+    window.closeModal=()=>document.getElementById("authModal").classList.add("hidden");
 
     // Auth submit
     document.getElementById("authSubmit").addEventListener("click", async ()=>{
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
+      const email=document.getElementById("email").value;
+      const pass=document.getElementById("password").value;
       try{
-        let userCredential;
-        if(currentMode==="login") userCredential = await signInWithEmailAndPassword(auth,email,pass);
-        else userCredential = await createUserWithEmailAndPassword(auth,email,pass);
-        showToast(currentMode==="login"?"Inloggad!":"Registrerad!","green");
+        if(document.getElementById("modalTitle").textContent==="Logga in"){
+          await signInWithEmailAndPassword(auth,email,pass);
+        }else{
+          await createUserWithEmailAndPassword(auth,email,pass);
+        }
+        showToast("Success!","green");
         closeModal();
-      }catch(err){
-        showToast(err.message,"red");
-      }
+      }catch(err){showToast(err.message,"red");}
     });
 
     // Logout
     document.getElementById("logoutBtn").addEventListener("click", ()=>{
-      signOut(auth).then(()=>{
-        guestSection.classList.remove("hidden");
-        userSection.classList.add("hidden");
-        document.getElementById("userName").textContent = "";
-        document.getElementById("loginBtn").classList.remove("hidden");
-        document.getElementById("registerBtn").classList.remove("hidden");
-        document.getElementById("logoutBtn").classList.add("hidden");
-        showToast("Utloggad!","green");
-      });
+      signOut(auth);
     });
 
-    // Guest booking form
+    // Guest form
     document.getElementById("guestBookingForm").addEventListener("submit", e=>{
       e.preventDefault();
+      servicesCount++;
+      checklistCounter.textContent = `${servicesCount} Services Selected`;
       showToast("Bokning skapad för gäst!","green");
       e.target.reset();
     });
 
-    // Handle auth state
-    onAuthStateChanged(auth, user=>{
+    // Add service button
+    document.getElementById("add-service-btn").addEventListener("click", ()=>{
+      servicesCount++;
+      checklistCounter.textContent = `${servicesCount} Services Selected`;
+      showToast("Tjänst tillagd!","green");
+    });
+
+    // Swish redirect
+    document.getElementById("swish-btn").addEventListener("click", ()=>window.location.href="https://www.swish.nu/");
+
+    // Auth state
+    onAuthStateChanged(auth,user=>{
       if(user){
-        document.getElementById("userName").textContent = `Välkommen, ${user.email}`;
-        guestSection.classList.add("hidden");
-        userSection.classList.remove("hidden");
+        document.getElementById("userName").textContent=`Välkommen, ${user.email}`;
+        guestSection.classList.add("hidden"); userSection.classList.remove("hidden");
         document.getElementById("loginBtn").classList.add("hidden");
         document.getElementById("registerBtn").classList.add("hidden");
         document.getElementById("logoutBtn").classList.remove("hidden");
 
-        // Example: Populate user bookings (mock, replace with real backend if needed)
-        userBookings.innerHTML = '';
-        const exampleBooking = document.createElement("div");
-        exampleBooking.className = "bg-yellow-400 text-black p-2 rounded cursor-pointer";
-        exampleBooking.textContent = "Fade - 2025-08-20 14:00";
-        userBookings.appendChild(exampleBooking);
-
-        // Editable booking click
-        exampleBooking.addEventListener("click", ()=>{
-          const newService = prompt("Ange ny tjänst:", "Fade");
-          const newTime = prompt("Ange ny tid:", "2025-08-20 14:00");
-          if(newService && newTime) exampleBooking.textContent = `${newService} - ${newTime}`;
+        // Example booking
+        userBookings.innerHTML='';
+        const b = document.createElement("div");
+        b.className="bg-yellow-400 text-black p-2 rounded cursor-pointer";
+        b.textContent="Fade - 2025-08-20 14:00";
+        userBookings.appendChild(b);
+        b.addEventListener("click", ()=>{
+          const newService = prompt("Ny tjänst","Fade");
+          const newTime = prompt("Ny tid","2025-08-20 14:00");
+          if(newService && newTime) b.textContent=`${newService} - ${newTime}`;
         });
 
-      } else {
-        guestSection.classList.remove("hidden");
-        userSection.classList.add("hidden");
+      }else{
+        guestSection.classList.remove("hidden"); userSection.classList.add("hidden");
         document.getElementById("loginBtn").classList.remove("hidden");
         document.getElementById("registerBtn").classList.remove("hidden");
         document.getElementById("logoutBtn").classList.add("hidden");
-        document.getElementById("userName").textContent = "";
+        document.getElementById("userName").textContent="";
       }
     });
-  </script>
 
+    // Auto shine effect every few seconds
+    setInterval(()=>document.querySelectorAll(".shine").forEach(el=>{el.classList.add("hovered"); setTimeout(()=>el.classList.remove("hovered"),1200);}),4000);
+
+    // Cart button scroll
+    document.getElementById("cart-btn").addEventListener("click", ()=>{
+      userSection.scrollIntoView({behavior:"smooth"});
+    });
+
+  </script>
   <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 </body>
 </html>
