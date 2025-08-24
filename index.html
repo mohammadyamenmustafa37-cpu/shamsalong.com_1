@@ -6,19 +6,7 @@
   <title>Sham Salong</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Loading bar at top */
-    #loadingBar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 4px;
-      background: linear-gradient(to right, #4B0082, #FFD700);
-      width: 0%;
-      z-index: 9999;
-      transition: width 0.4s ease;
-    }
-
-    /* Shine effect on booking forms */
+    /* Shine effect */
     .shine {
       position: relative;
       overflow: hidden;
@@ -27,234 +15,136 @@
       content: "";
       position: absolute;
       top: 0;
-      left: -100%;
+      left: -75%;
+      width: 50%;
       height: 100%;
-      width: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-      transform: skewX(-25deg);
+      background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: skewX(-20deg);
     }
-    .shine.hovered::before {
-      animation: shineMove 1.2s ease forwards;
+    .shine:hover::before {
+      animation: shine 1s ease forwards;
     }
-    @keyframes shineMove {
-      100% { left: 200%; }
+    @keyframes shine {
+      100% {
+        left: 125%;
+      }
     }
 
-    /* Logo */
-    .logo { height:50px; margin-right:10px; }
-
-    /* Cart Button */
-    #cart-btn {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      font-size: 24px;
-      background-color: #ff9900;
-      border: none;
+    /* Spinner */
+    .spinner {
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid #FFD700;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      cursor: pointer;
-      z-index: 999;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
     }
-
-    /* Swish Button */
-    #swish-btn { margin-top:10px; background:#4B0082; color:#FFD700; padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer; }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
-<body class="bg-gradient-to-r from-purple-900 via-purple-800 to-yellow-400 text-white min-h-screen flex flex-col">
+<body class="bg-gradient-to-b from-purple-900 to-purple-700 text-white font-sans">
 
-  <!-- Loading bar -->
-  <div id="loadingBar"></div>
-
-  <!-- Header -->
-  <header class="bg-black bg-opacity-70 flex flex-col md:flex-row justify-between items-center p-4">
-    <div class="flex items-center">
-      <img src="file-JhgQvLXKtcCm9rYq7SiQaR" class="logo" alt="Sham Salong Logo">
-      <h1 class="text-2xl font-bold mb-2 md:mb-0">Sham Salong</h1>
-    </div>
-    <div class="flex flex-row items-center gap-2">
-      <span id="userName" class="font-semibold"></span>
-      <button id="loginBtn" class="bg-yellow-400 text-black px-4 py-2 rounded font-bold" onclick="openModal('login')">Logga in</button>
-      <button id="registerBtn" class="bg-yellow-400 text-black px-4 py-2 rounded font-bold" onclick="openModal('register')">Registrera</button>
-      <button id="logoutBtn" class="bg-red-600 text-white px-4 py-2 rounded font-bold hidden" onclick="logout()">Logga ut</button>
-    </div>
+  <!-- Header + Om oss -->
+  <header class="p-6 bg-purple-950 shadow-lg text-center">
+    <h1 class="text-4xl font-extrabold text-yellow-400 mb-4 shine">Sham Salong</h1>
+    <p class="max-w-3xl mx-auto text-gray-200 leading-relaxed">
+      ✂️ <span class="text-yellow-400 font-bold">Sham Salong</span>, Det bästa i Oxelösund. <br>
+      Vi erbjuder de bästa tjänsterna i Oxelösund men samtidigt så behåller vi våra ödmjuka priser. 
+      Inga kompromisser med en hög standard du bara hittar hos oss! <br><br>
+      Vare sig det är en frisyr du syftar till eller hårfärg så fixar vi det. 
+      Du hittar oss på <span class="text-yellow-300 font-semibold">Esplanaden 1B</span> och vi öppnar hela veckan från 
+      <span class="text-yellow-300 font-semibold">10:00 till 19:00</span>.
+    </p>
   </header>
 
-  <!-- Cart Button -->
-  <button id="cart-btn">🛒</button>
+  <!-- Main Content -->
+  <main class="flex flex-col items-center text-center p-8 space-y-12">
 
-  <!-- About Section -->
-  <section class="bg-purple-900 bg-opacity-80 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-3xl mb-4">Om oss</h2>
-    <p>Sham Salong erbjuder kvalitativa klippningar, skäggvård och färgning i hjärtat av staden – din lokala premium barbershop.</p>
-  </section>
+    <!-- Tjänster Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+      <div class="bg-purple-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition shine">
+        <h3 class="text-xl font-bold text-yellow-400">Fade</h3>
+        <p class="text-gray-200 mt-2">Perfekt övergång för en modern look.</p>
+        <span class="block mt-3 text-yellow-300 font-semibold">250 kr</span>
+      </div>
+      <div class="bg-purple-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition shine">
+        <h3 class="text-xl font-bold text-yellow-400">Skäggtrim</h3>
+        <p class="text-gray-200 mt-2">Skäggvård för en skarp stil.</p>
+        <span class="block mt-3 text-yellow-300 font-semibold">150 kr</span>
+      </div>
+      <div class="bg-purple-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition shine">
+        <h3 class="text-xl font-bold text-yellow-400">Färgning</h3>
+        <p class="text-gray-200 mt-2">Ge ditt hår en ny fräsch färg.</p>
+        <span class="block mt-3 text-yellow-300 font-semibold">600 kr</span>
+      </div>
+    </section>
 
-  <!-- Checklist Counter -->
-  <div id="checklist-counter" class="mx-auto text-center text-yellow-400 text-lg font-bold">0 Services Selected</div>
+    <!-- Boka Tid -->
+    <section class="w-full max-w-2xl">
+      <h2 class="text-3xl font-bold text-yellow-400">Boka Tid</h2>
+      <p class="text-gray-200">Boka enkelt din tid via vår Calendly-integration.</p>
 
-  <!-- Guest Booking Form -->
-  <section id="guestBookingSection" class="shine bg-black bg-opacity-70 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-2xl mb-4">Boka som gäst</h2>
-    <form id="guestBookingForm" class="flex flex-col gap-4">
-      <input type="text" id="guestName" placeholder="Ditt namn" class="p-2 rounded text-black" required>
-      <input type="text" id="guestPhone" placeholder="Telefonnummer" class="p-2 rounded text-black" required>
-      <select id="guestService" class="p-2 rounded text-black" required>
-        <option value="">Välj tjänst</option>
-        <option value="fade">Fade - 250 kr</option>
-        <option value="skägg">Skägg - 150 kr</option>
-        <option value="färgning">Färgning - 600 kr</option>
-        <option value="barn">Barnklippning - 200 kr</option>
-      </select>
-      <input type="datetime-local" id="guestTime" class="p-2 rounded text-black" required>
-      <button type="submit" class="bg-yellow-400 text-black font-bold py-2 rounded">Boka som gäst</button>
-    </form>
-  </section>
+      <!-- Loading Spinner -->
+      <div id="loading" class="flex justify-center items-center h-40">
+        <div class="spinner"></div>
+      </div>
 
-  <!-- Logged-in Booking Section -->
-  <section id="userBookingSection" class="shine hidden bg-black bg-opacity-70 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-2xl mb-4">Min bokning</h2>
-    <div id="userBookings" class="flex flex-col gap-4"></div>
-    <button id="add-service-btn" class="mt-4 bg-yellow-400 text-black px-4 py-2 rounded font-bold">+ Lägg till tjänst</button>
-    <button id="swish-btn">Betala med Swish</button>
-  </section>
+      <!-- Calendly Embed -->
+      <div id="calendly-container" class="w-full bg-white text-black p-4 rounded-lg shadow-lg hidden">
+        <div class="calendly-inline-widget" 
+             data-url="https://calendly.com/YOUR-CALENDLY-USERNAME" 
+             style="min-width:320px;height:630px;"></div>
+        <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+      </div>
 
-  <!-- Inline Calendly -->
-  <section class="shine bg-black bg-opacity-70 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-2xl mb-4">Boka via Calendly</h2>
-    <div class="calendly-inline-widget" data-url="https://calendly.com/mohammadyamenmustafa37?background_color=4b0082&text_color=ffffff&primary_color=ffd700" style="min-width:320px;height:700px;"></div>
-  </section>
+      <!-- Interaktiv knapp -->
+      <button class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 active:scale-95 shine">
+        📅 Boka Nu
+      </button>
+    </section>
 
-  <!-- Contact -->
-  <section class="bg-purple-900 bg-opacity-80 rounded-xl p-8 mx-auto my-6 max-w-3xl text-center">
-    <h2 class="text-2xl mb-4">Kontakta oss</h2>
-    <p>📞 0793488688</p>
-    <p>📧 shams.barbershop74@gmail.com</p>
-    <p>📍 Esplanaden 1B</p>
-  </section>
+    <!-- Öppettider -->
+    <section class="bg-purple-900 p-6 rounded-lg shadow-lg w-full max-w-sm shine">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-2">Öppettider</h3>
+      <p class="text-gray-200">Måndag – Söndag: 10:00 – 19:00</p>
+    </section>
 
-  <!-- Auth Modal -->
-  <div id="authModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center hidden z-50">
-    <div class="bg-white text-black p-6 rounded-lg w-11/12 max-w-md relative">
-      <button class="absolute top-2 right-2 bg-red-600 text-white rounded-full w-8 h-8" onclick="closeModal()">×</button>
-      <h3 id="modalTitle" class="text-2xl font-bold mb-4">Logga in</h3>
-      <input type="email" id="email" placeholder="Email" class="w-full p-2 rounded mb-2">
-      <input type="password" id="password" placeholder="Lösenord" class="w-full p-2 rounded mb-2">
-      <button id="authSubmit" class="w-full bg-yellow-400 text-black py-2 rounded font-bold">Skicka</button>
-    </div>
-  </div>
+    <!-- Vad vi gör -->
+    <section class="bg-purple-800 p-6 rounded-lg shadow-lg w-full max-w-2xl shine">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-4">Vad vi gör</h3>
+      <p class="text-gray-200 leading-relaxed">
+        Vi stylar, färgar, klipper och tar hand om hår. <br>
+        Vår butik har expertis i många saker, men främst så är det 
+        <span class="text-yellow-300 font-semibold">hårklippning</span> vi är mästare på.
+      </p>
+    </section>
 
-  <!-- Toast -->
-  <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-80 text-white px-4 py-2 rounded hidden"></div>
+    <!-- Kontakta oss -->
+    <section class="bg-purple-900 p-6 rounded-lg shadow-lg w-full max-w-md shine">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-2">Kontakta oss</h3>
+      <p class="text-gray-200">📍 Esplanaden 1B, Oxelösund</p>
+      <p class="text-gray-200">📞 0793488688</p>
+    </section>
 
-  <!-- Firebase & Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+  </main>
 
-    const firebaseConfig = { /* ... same as before ... */ };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    const guestSection = document.getElementById("guestBookingSection");
-    const userSection = document.getElementById("userBookingSection");
-    const userBookings = document.getElementById("userBookings");
-    const checklistCounter = document.getElementById("checklist-counter");
-    let servicesCount = 0;
-
-    function showToast(msg,color="black"){
-      const toast = document.getElementById("toast");
-      toast.textContent = msg;
-      toast.style.backgroundColor = color;
-      toast.classList.remove("hidden");
-      setTimeout(()=>toast.classList.add("hidden"),3000);
-    }
-
-    // Modal
-    window.openModal=(mode)=>{
-      document.getElementById("modalTitle").textContent = mode==="login"?"Logga in":"Registrera";
-      document.getElementById("authModal").classList.remove("hidden");
-    }
-    window.closeModal=()=>document.getElementById("authModal").classList.add("hidden");
-
-    // Auth submit
-    document.getElementById("authSubmit").addEventListener("click", async ()=>{
-      const email=document.getElementById("email").value;
-      const pass=document.getElementById("password").value;
-      try{
-        if(document.getElementById("modalTitle").textContent==="Logga in"){
-          await signInWithEmailAndPassword(auth,email,pass);
-        }else{
-          await createUserWithEmailAndPassword(auth,email,pass);
-        }
-        showToast("Success!","green");
-        closeModal();
-      }catch(err){showToast(err.message,"red");}
+  <script>
+    // Fake loading effect for Calendly
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("calendly-container").classList.remove("hidden")
+      }, 2000);
     });
-
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", ()=>{
-      signOut(auth);
-    });
-
-    // Guest form
-    document.getElementById("guestBookingForm").addEventListener("submit", e=>{
-      e.preventDefault();
-      servicesCount++;
-      checklistCounter.textContent = `${servicesCount} Services Selected`;
-      showToast("Bokning skapad för gäst!","green");
-      e.target.reset();
-    });
-
-    // Add service button
-    document.getElementById("add-service-btn").addEventListener("click", ()=>{
-      servicesCount++;
-      checklistCounter.textContent = `${servicesCount} Services Selected`;
-      showToast("Tjänst tillagd!","green");
-    });
-
-    // Swish redirect
-    document.getElementById("swish-btn").addEventListener("click", ()=>window.location.href="https://www.swish.nu/");
-
-    // Auth state
-    onAuthStateChanged(auth,user=>{
-      if(user){
-        document.getElementById("userName").textContent=`Välkommen, ${user.email}`;
-        guestSection.classList.add("hidden"); userSection.classList.remove("hidden");
-        document.getElementById("loginBtn").classList.add("hidden");
-        document.getElementById("registerBtn").classList.add("hidden");
-        document.getElementById("logoutBtn").classList.remove("hidden");
-
-        // Example booking
-        userBookings.innerHTML='';
-        const b = document.createElement("div");
-        b.className="bg-yellow-400 text-black p-2 rounded cursor-pointer";
-        b.textContent="Fade - 2025-08-20 14:00";
-        userBookings.appendChild(b);
-        b.addEventListener("click", ()=>{
-          const newService = prompt("Ny tjänst","Fade");
-          const newTime = prompt("Ny tid","2025-08-20 14:00");
-          if(newService && newTime) b.textContent=`${newService} - ${newTime}`;
-        });
-
-      }else{
-        guestSection.classList.remove("hidden"); userSection.classList.add("hidden");
-        document.getElementById("loginBtn").classList.remove("hidden");
-        document.getElementById("registerBtn").classList.remove("hidden");
-        document.getElementById("logoutBtn").classList.add("hidden");
-        document.getElementById("userName").textContent="";
-      }
-    });
-
-    // Auto shine effect every few seconds
-    setInterval(()=>document.querySelectorAll(".shine").forEach(el=>{el.classList.add("hovered"); setTimeout(()=>el.classList.remove("hovered"),1200);}),4000);
-
-    // Cart button scroll
-    document.getElementById("cart-btn").addEventListener("click", ()=>{
-      userSection.scrollIntoView({behavior:"smooth"});
-    });
-
   </script>
-  <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
 </body>
 </html>
