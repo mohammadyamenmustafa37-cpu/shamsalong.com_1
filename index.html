@@ -5,20 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sham Salong</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .spinner {
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top: 4px solid #FFD700;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
 </head>
 <body class="bg-gradient-to-b from-purple-900 to-purple-700 text-white font-sans">
 
@@ -64,27 +50,13 @@
     </section>
 
     <!-- Boka Tid -->
-    <section>
-      <h2 class="text-3xl font-bold text-yellow-400">Boka Tid</h2>
-      <p class="text-gray-200">Boka enkelt din tid via vår Calendly-integration.</p>
-
-      <!-- Loading Spinner -->
-      <div id="loading" class="flex justify-center items-center h-40">
-        <div class="spinner"></div>
-      </div>
-
-      <!-- Calendly Embed -->
-      <div id="calendly-container" class="w-full max-w-lg bg-white text-black p-4 rounded-lg shadow-lg hidden">
-        <div class="calendly-inline-widget" 
-             data-url="https://calendly.com/mohammadyamenmustafa37" 
-             style="min-width:320px;height:630px;"></div>
-        <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
-      </div>
-
-      <!-- Interaktiv knapp -->
-      <button class="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 active:scale-95">
+    <section class="bg-purple-900 p-6 rounded-lg shadow-lg w-full max-w-md">
+      <h2 class="text-3xl font-bold text-yellow-400 mb-4">Boka Tid</h2>
+      <p class="text-gray-200 mb-4">Klicka nedan för att boka din tid via Calendly.</p>
+      <a href="https://calendly.com/mohammadyamenmustafa37" target="_blank"
+         class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 active:scale-95">
         📅 Boka Nu
-      </button>
+      </a>
     </section>
 
     <!-- Öppettider -->
@@ -111,16 +83,6 @@
     </section>
 
   </main>
-
-  <script>
-    // Fake loading effect for Calendly
-    window.addEventListener("load", () => {
-      setTimeout(() => {
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("calendly-container").classList.remove("hidden")
-      }, 2000);
-    });
-  </script>
 
 </body>
 </html>
