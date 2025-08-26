@@ -3,161 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sham Salong - Det bästa i Oxelösund</title>
+  <title>Sham Salong</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: radial-gradient(circle at top left, #3b0040, #1a1a1a);
-      color: #eaeaea;
-      line-height: 1.6;
+    /* Shine hover effekt */
+    .shine {
+      position: relative;
+      overflow: hidden;
     }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 30px 20px;
+    .shine::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.6),
+        transparent
+      );
+      transform: skewX(-25deg);
     }
-
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 30px;
+    .shine:hover::before {
+      animation: shine 0.8s ease forwards;
     }
-
-    .header img {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-    }
-
-    .header h1 {
-      font-size: 2rem;
-      color: #9acd32; /* Grön text */
-      margin: 0;
-    }
-
-    .intro {
-      margin-bottom: 40px;
-      font-size: 1rem;
-    }
-
-    .intro strong {
-      color: #9acd32;
-    }
-
-    h2 {
-      color: #9acd32;
-      margin-bottom: 15px;
-    }
-
-    .services {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-    }
-
-    .service-card {
-      flex: 1;
-      min-width: 200px;
-      background: #111;
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .service-card h3 {
-      color: #9acd32;
-      margin-bottom: 10px;
-    }
-
-    .service-card p {
-      margin-bottom: 10px;
-      font-size: 0.95rem;
-    }
-
-    .service-card .price {
-      font-weight: bold;
-      font-size: 1.2rem;
-      color: #9acd32;
-    }
-
-    .btn {
-      display: inline-block;
-      background: #9acd32;
-      color: #111;
-      font-weight: bold;
-      padding: 12px 30px;
-      border-radius: 6px;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-
-    .btn:hover {
-      background: #b4e05a;
-    }
-
-    .hours {
-      margin-top: 40px;
-    }
-
-    .hours h2 {
-      margin-bottom: 10px;
+    @keyframes shine {
+      0% { left: -75%; }
+      100% { left: 125%; }
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <img src="45E124FE-3DF6-4E2B-9771-8D79BA4A8AA4.png" alt="Sham Salong Logo">
-      <h1>Sham Salong,<br>Det bästa i Oxelösund</h1>
-    </div>
+<body class="bg-gradient-to-b from-purple-900 to-purple-700 text-white font-sans">
 
-    <!-- Intro -->
-    <div class="intro">
-      <p>
-        Vi erbjuder de bästa tjänsterna i Oxelösund men samtidigt så behåller vi våra ödmjuka priser.
-        Inga kompromisser med en hög standard du bara hittar hos oss! 
-        Vare det sig en frisyr du syftar till eller hårfärg så fixar vi det. 
-        Du hittar oss på <strong>Esplanaden 1B</strong> och vi öppnar hela veckan från 
-        <strong>10:00 till 19:00</strong>.
+  <!-- Header + Om oss -->
+  <header class="p-6 bg-purple-950 shadow-lg">
+    <h1 class="text-3xl font-extrabold mb-2" style="color:#ADFF2F;">Sham Salong</h1>
+    <p class="max-w-2xl text-gray-200 leading-relaxed">
+       <span class="font-bold" style="color:#ADFF2F;">Sham Salong</span>, Det bästa i Oxelösund. <br>
+      Vi erbjuder de bästa tjänsterna i Oxelösund men samtidigt så behåller vi våra ödmjuka priser. 
+      Inga kompromisser med en hög standard du bara hittar hos oss! <br><br>
+      Vare sig det är en frisyr du syftar till eller hårfärg så fixar vi det. 
+      Du hittar oss på <span class="font-semibold" style="color:#ADFF2F;">Esplanaden 1B</span> och vi öppnar hela veckan från 
+      <span class="font-semibold" style="color:#ADFF2F;">10:00 till 19:00</span>.
+    </p>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-col items-center text-center p-8 space-y-12">
+
+    <!-- Tjänster Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+      <!-- Fade -->
+      <a href="https://calendly.com/mohammadyamenmustafa37/bokning" target="_blank" 
+         class="shine bg-purple-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition block">
+        <h3 class="text-xl font-bold" style="color:#ADFF2F;">Fade</h3>
+        <p class="text-gray-200 mt-2">Perfekt övergång för en modern look.</p>
+        <span class="block mt-3 font-semibold" style="color:#ADFF2F;">250 kr</span>
+      </a>
+      <!-- Skäggtrim -->
+      <a href="https://calendly.com/mohammadyamenmustafa37/skagg" target="_blank" 
+         class="shine bg-purple-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition block">
+        <h3 class="text-xl font-bold" style="color:#ADFF2F;">Skäggtrim</h3>
+        <p class="text-gray-200 mt-2">Skäggvård för en skarp stil.</p>
+        <span class="block mt-3 font-semibold" style="color:#ADFF2F;">150 kr</span>
+      </a>
+      <!-- Färgning -->
+      <a href="https://calendly.com/mohammadyamenmustafa37/fargning" target="_blank" 
+         class="shine bg-purple-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition block">
+        <h3 class="text-xl font-bold" style="color:#ADFF2F;">Färgning</h3>
+        <p class="text-gray-200 mt-2">Ge ditt hår en ny fräsch färg.</p>
+        <span class="block mt-3 font-semibold" style="color:#ADFF2F;">600 kr</span>
+      </a>
+    </section>
+
+    <!-- Boka Tid -->
+    <section class="bg-purple-900 p-6 rounded-lg shadow-lg w-full max-w-md">
+      <h2 class="text-3xl font-bold mb-4" style="color:#ADFF2F;">Boka Tid</h2>
+      <p class="text-gray-200 mb-4">Klicka nedan för att boka din tid via Calendly.</p>
+      <a href="https://calendly.com/mohammadyamenmustafa37" target="_blank"
+         class="shine inline-block font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 active:scale-95"
+         style="background-color:#ADFF2F; color:#1a1a1a;">
+        📅 Boka Nu
+      </a>
+    </section>
+
+    <!-- Öppettider -->
+    <section class="bg-purple-900 p-6 rounded-lg shadow-lg w-full max-w-sm">
+      <h3 class="text-2xl font-bold mb-2" style="color:#ADFF2F;">Öppettider</h3>
+      <p class="text-gray-200">Måndag – Söndag: 10:00 – 19:00</p>
+    </section>
+
+    <!-- Vad vi gör -->
+    <section class="bg-purple-800 p-6 rounded-lg shadow-lg w-full max-w-2xl">
+      <h3 class="text-2xl font-bold mb-4" style="color:#ADFF2F;">Vad vi gör</h3>
+      <p class="text-gray-200 leading-relaxed">
+        Vi stylar, färgar, klipper och tar hand om hår. <br>
+        Vår butik har expertis i många saker, men främst så är det 
+        <span class="font-semibold" style="color:#ADFF2F;">hårklippning</span> vi är mästare på.
       </p>
-    </div>
+    </section>
 
-    <!-- Services -->
-    <h2>Vad vi gör</h2>
-    <p>Vi stylar, färgar, klipper och tar hand om hår. 
-       Vår butik har expertis i många saker, men främst så är det hårklippning vi är mästare på.</p>
+    <!-- Kontakta oss -->
+    <section class="bg-purple-900 p-6 rounded-lg shadow-lg w-full max-w-md">
+      <h3 class="text-2xl font-bold mb-2" style="color:#ADFF2F;">Kontakta oss</h3>
+      <p class="text-gray-200">📍 Esplanaden 1B, Oxelösund</p>
+      <p class="text-gray-200">📞 0793488688</p>
+    </section>
 
-    <div class="services">
-      <div class="service-card">
-        <h3>Fade</h3>
-        <p>Perfekt övergång för en modern look.</p>
-        <div class="price">250 kr</div>
-      </div>
-      <div class="service-card">
-        <h3>Skäggtrim</h3>
-        <p>Skäggvård för en skarp stil.</p>
-        <div class="price">150 kr</div>
-      </div>
-      <div class="service-card">
-        <h3>Färgning</h3>
-        <p>Ge ditt hår en ny fräsch färg.</p>
-        <div class="price">600 kr</div>
-      </div>
-    </div>
+  </main>
 
-    <!-- CTA -->
-    <a href="https://calendly.com/mohammadyamenmustafa37" target="_blank" class="btn">BOKA NU</a>
-
-    <!-- Opening Hours -->
-    <div class="hours">
-      <h2>Öppettider</h2>
-      <p>Måndag – Söndag: 10:00 – 19:00</p>
-    </div>
-  </div>
 </body>
 </html>
