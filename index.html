@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
-    /* Shine effekt */
+    /* Shine effekt for elements */
     .shine {
       position: relative;
       overflow: hidden;
@@ -20,7 +20,7 @@
       left: -75%;
       width: 50%;
       height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(173, 255, 47, 0.4), transparent);
+      background: linear-gradient(120deg, transparent, rgba(179, 188, 103, 0.4), transparent);
       transform: skewX(-20deg);
     }
     .shine:hover::after,
@@ -28,24 +28,43 @@
       animation: shine 1s forwards;
     }
     @keyframes shine {
-      100% {
-        left: 125%;
-      }
+      100% { left: 125%; }
+    }
+
+    /* Subtle animated sheen on background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, rgba(179,188,103,0.15) 0%, transparent 70%);
+      animation: moveSheen 20s linear infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    @keyframes moveSheen {
+      0% { transform: rotate(0deg) translateX(0) translateY(0); }
+      50% { transform: rotate(45deg) translateX(50%) translateY(50%); }
+      100% { transform: rotate(0deg) translateX(0) translateY(0); }
     }
   </style>
 </head>
-<body class="bg-gradient-to-b from-purple-900 to-purple-700 text-white font-sans">
+
+<body class="bg-gradient-to-b from-emerald-900 to-teal-800 text-gray-100 font-sans">
 
   <!-- Header + Om oss -->
-  <header class="p-6 bg-purple-950 shadow-lg shine rounded-lg">
-    <h1 class="text-3xl font-extrabold text-[#ADFF2F] mb-2">Sham Salong</h1>
+  <header class="p-6 bg-emerald-950 shadow-lg shine rounded-lg">
+    <h1 class="text-3xl font-extrabold text-[#B5BC67] mb-2">Sham Salong</h1>
     <p class="max-w-2xl text-gray-200 leading-relaxed">
-      <span class="text-[#ADFF2F] font-bold">Sham Salong</span>, det bästa i Oxelösund. <br>
+      <span class="text-[#B5BC67] font-bold">Sham Salong</span>, det bästa i Oxelösund. <br>
       Vi erbjuder de bästa tjänsterna men samtidigt till ödmjuka priser. 
       Inga kompromisser med en hög standard du bara hittar hos oss! <br><br>
       Oavsett om du vill klippa dig eller färga håret så fixar vi det. 
-      Du hittar oss på <span class="text-[#ADFF2F] font-semibold">Esplanaden 1B</span> och vi har öppet 
-      <span class="text-[#ADFF2F] font-semibold">alla dagar 10:00 – 19:00</span>.
+      Du hittar oss på <span class="text-[#B5BC67] font-semibold">Esplanaden 1B</span> och vi har öppet 
+      <span class="text-[#B5BC67] font-semibold">alla dagar 10:00 – 19:00</span>.
     </p>
   </header>
 
@@ -55,60 +74,58 @@
     <!-- Tjänster Cards -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
       <a href="https://calendly.com/mohammadyamenmustafa37/bokning" 
-         class="bg-purple-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition shine">
-        <h3 class="text-xl font-bold text-[#ADFF2F]">Fade</h3>
-        <p class="text-gray-200 mt-2">Perfekt övergång för en modern look.</p>
-        <span class="block mt-3 text-[#ADFF2F] font-semibold">250 kr</span>
+         class="bg-emerald-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition shine">
+        <h3 class="text-xl font-bold text-[#A3BE8C]">Fade</h3>
+        <p class="text-gray-100 mt-2">Perfekt övergång för en modern look.</p>
+        <span class="block mt-3 text-[#A3BE8C] font-semibold">250 kr</span>
       </a>
       <a href="https://calendly.com/mohammadyamenmustafa37/skagg" 
-         class="bg-purple-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition shine">
-        <h3 class="text-xl font-bold text-[#ADFF2F]">Skäggtrim</h3>
-        <p class="text-gray-200 mt-2">Skäggvård för en skarp stil.</p>
-        <span class="block mt-3 text-[#ADFF2F] font-semibold">150 kr</span>
+         class="bg-emerald-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition shine">
+        <h3 class="text-xl font-bold text-[#A3BE8C]">Skäggtrim</h3>
+        <p class="text-gray-100 mt-2">Skäggvård för en skarp stil.</p>
+        <span class="block mt-3 text-[#A3BE8C] font-semibold">150 kr</span>
       </a>
       <a href="https://calendly.com/mohammadyamenmustafa37/fargning" 
-         class="bg-purple-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition shine">
-        <h3 class="text-xl font-bold text-[#ADFF2F]">Färgning</h3>
-        <p class="text-gray-200 mt-2">Ge ditt hår en ny fräsch färg.</p>
-        <span class="block mt-3 text-[#ADFF2F] font-semibold">600 kr</span>
+         class="bg-emerald-800 p-6 rounded-lg shadow-lg hover:scale-105 transform transition shine">
+        <h3 class="text-xl font-bold text-[#A3BE8C]">Färgning</h3>
+        <p class="text-gray-100 mt-2">Ge ditt hår en ny fräsch färg.</p>
+        <span class="block mt-3 text-[#A3BE8C] font-semibold">600 kr</span>
       </a>
     </section>
 
     <!-- Boka Tid -->
     <section>
-      <h2 class="text-3xl font-bold text-[#ADFF2F]">Boka Tid</h2>
+      <h2 class="text-3xl font-bold text-[#B5BC67]">Boka Tid</h2>
       <p class="text-gray-200">Boka enkelt din tid via vår Calendly-länk.</p>
-
-      <!-- Interaktiv knapp -->
       <a href="https://calendly.com/mohammadyamenmustafa37" target="_blank"
-         class="mt-4 inline-block bg-[#ADFF2F] hover:bg-green-400 text-purple-900 font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 active:scale-95 shine">
+         class="mt-4 inline-block bg-[#A3BE8C] hover:bg-lime-600 text-emerald-900 font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 active:scale-95 shine">
         📅 Boka Nu
       </a>
     </section>
 
     <!-- Öppettider -->
-    <section class="bg-purple-900 p-6 rounded-lg shadow-lg w-full max-w-sm shine">
-      <h3 class="text-2xl font-bold text-[#ADFF2F] mb-2">Öppettider</h3>
-      <p class="text-gray-200">Måndag – Söndag: 10:00 – 19:00</p>
+    <section class="bg-emerald-900 p-6 rounded-lg shadow-lg w-full max-w-sm shine">
+      <h3 class="text-2xl font-bold text-[#B5BC67] mb-2">Öppettider</h3>
+      <p class="text-gray-100">Måndag – Söndag: 10:00 – 19:00</p>
     </section>
 
     <!-- Vad vi gör -->
-    <section class="bg-purple-800 p-6 rounded-lg shadow-lg w-full max-w-2xl shine">
-      <h3 class="text-2xl font-bold text-[#ADFF2F] mb-4">Vad vi gör</h3>
-      <p class="text-gray-200 leading-relaxed">
+    <section class="bg-emerald-800 p-6 rounded-lg shadow-lg w-full max-w-2xl shine">
+      <h3 class="text-2xl font-bold text-[#B5BC67] mb-4">Vad vi gör</h3>
+      <p class="text-gray-100 leading-relaxed">
         Vi stylar, färgar, klipper och tar hand om hår. <br>
-        Vår specialitet är <span class="text-[#ADFF2F] font-semibold">hårklippning</span>.
+        Vår specialitet är <span class="text-[#A3BE8C] font-semibold">hårklippning</span>.
       </p>
     </section>
 
     <!-- Kontakta oss -->
-    <section class="bg-purple-900 p-6 rounded-lg shadow-lg w-full max-w-md shine">
-      <h3 class="text-2xl font-bold text-[#ADFF2F] mb-4">Kontakta oss</h3>
-      <p class="text-gray-200 flex items-center gap-2">
-        <i class="fas fa-map-marker-alt text-[#ADFF2F]"></i> Esplanaden 1B, Oxelösund
+    <section class="bg-emerald-900 p-6 rounded-lg shadow-lg w-full max-w-md shine">
+      <h3 class="text-2xl font-bold text-[#B5BC67] mb-4">Kontakta oss</h3>
+      <p class="text-gray-100 flex items-center gap-2">
+        <i class="fas fa-map-marker-alt text-[#A3BE8C]"></i> Esplanaden 1B, Oxelösund
       </p>
-      <p class="text-gray-200 flex items-center gap-2 mt-2">
-        <i class="fas fa-phone text-[#ADFF2F]"></i> 0793488688
+      <p class="text-gray-100 flex items-center gap-2 mt-2">
+        <i class="fas fa-phone text-[#A3BE8C]"></i> 0793488688
       </p>
     </section>
 
